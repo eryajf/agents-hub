@@ -87,10 +87,23 @@ struct ContentView: View {
 
             if isShowingAPIProviderList {
                 ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        manager.addAPIProvider()
-                        if let apiProviderID = manager.selectedAPIProviderID {
-                            detailPath = [.apiProvider(apiProviderID)]
+                    Menu {
+                        Button {
+                            manager.addAPIProvider()
+                            openSelectedAPIProvider()
+                        } label: {
+                            L.label("ui.action.add_api_provider_blank", systemImage: "plus", using: lm)
+                        }
+
+                        Divider()
+
+                        ForEach(APIPresetProvider.allCases) { preset in
+                            Button {
+                                manager.addAPIProvider(preset: preset)
+                                openSelectedAPIProvider()
+                            } label: {
+                                Text(preset.name)
+                            }
                         }
                     } label: {
                         L.label("ui.action.add_api_provider", systemImage: "plus", using: lm)
@@ -140,9 +153,7 @@ struct ContentView: View {
                 ToolbarItemGroup(placement: .primaryAction) {
                     Button {
                         manager.duplicateSelectedAPIProvider()
-                        if let apiProviderID = manager.selectedAPIProviderID {
-                            detailPath = [.apiProvider(apiProviderID)]
-                        }
+                        openSelectedAPIProvider()
                     } label: {
                         L.label("ui.action.duplicate", systemImage: "doc.on.doc", using: lm)
                     }
@@ -261,6 +272,12 @@ struct ContentView: View {
 
     private var isSelectedProfileActive: Bool {
         manager.selectedProfile?.isActive == true
+    }
+
+    private func openSelectedAPIProvider() {
+        if let apiProviderID = manager.selectedAPIProviderID {
+            detailPath = [.apiProvider(apiProviderID)]
+        }
     }
 
     private func showLatestFeedback() {

@@ -89,3 +89,34 @@ enum ProviderDefaults {
         static let defaultModel = "gpt-5.5"
     }
 }
+
+// MARK: - API Provider Presets
+
+enum APIPresetProviderDefaults {
+    static let providers: [APIPresetProvider] = [
+        APIPresetProvider(
+            id: "anthropic",
+            name: "Anthropic",
+            baseURL: "https://api.anthropic.com",
+            providerWebsiteURL: "https://anthropic.com"
+        ),
+        APIPresetProvider(
+            id: "openai",
+            name: "OpenAI",
+            baseURL: "https://api.openai.com/v1",
+            providerWebsiteURL: "https://openai.com"
+        ),
+        APIPresetProvider(
+            id: "pipe-llm",
+            name: "PIPE LLM",
+            baseURL: "https://api.pipellm.ai",
+            providerWebsiteURL: "https://www.pipellm.ai"
+        ),
+        APIPresetProvider(
+            id: "pipe-llm-code",
+            name: "PIPE LLM Code",
+            baseURL: "https://code.pipellm.ai",
+            providerWebsiteURL: "https://code.pipellm.ai"
+        ),
+    ]
+}

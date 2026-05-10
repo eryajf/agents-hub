@@ -22,6 +22,7 @@
 "ui.action.refresh" = "Refresh";
 "ui.action.reveal_in_finder" = "Reveal in Finder";
 "ui.action.add_api_provider" = "Add Provider";
+"ui.action.add_api_provider_blank" = "Blank Provider";
 "ui.action.cancel" = "Cancel";
 
 /* Common labels */

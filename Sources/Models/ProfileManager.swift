@@ -409,10 +409,11 @@ extension ProfileManager {
                 Int64(count)
             )
         )
-        apiProviders.append(apiProvider)
-        selectedAPIProviderID = apiProvider.id
-        clearMessages()
-        save()
+        registerAPIProvider(apiProvider)
+    }
+
+    func addAPIProvider(preset: APIPresetProvider) {
+        registerAPIProvider(preset.makeProvider())
     }
 
     func duplicateSelectedAPIProvider() {
@@ -428,6 +429,10 @@ extension ProfileManager {
             apiProvider.name
         )
         apiProvider.updatedAt = .now
+        registerAPIProvider(apiProvider)
+    }
+
+    private func registerAPIProvider(_ apiProvider: APIProvider) {
         apiProviders.append(apiProvider)
         selectedAPIProviderID = apiProvider.id
         clearMessages()

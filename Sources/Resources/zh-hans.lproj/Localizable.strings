@@ -22,6 +22,7 @@
 "ui.action.refresh" = "刷新";
 "ui.action.reveal_in_finder" = "在 Finder 中显示";
 "ui.action.add_api_provider" = "添加供应商";
+"ui.action.add_api_provider_blank" = "空白供应商";
 "ui.action.cancel" = "取消";
 
 /* Common labels */
