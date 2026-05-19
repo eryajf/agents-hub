@@ -12,6 +12,10 @@ struct AgentsHubApp: App {
         WindowGroup {
             ContentView(manager: manager, appUpdater: appUpdater)
                 .environment(localizationManager)
+                .frame(
+                    minWidth: AppLayoutConstants.windowMinWidth,
+                    minHeight: AppLayoutConstants.windowMinHeight
+                )
         }
         .windowStyle(.titleBar)
         .windowResizability(.contentSize)

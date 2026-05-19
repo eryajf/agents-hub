@@ -22,7 +22,11 @@ struct ContentView: View {
     var body: some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
             SidebarView(manager: manager, selection: $sidebarSelection)
-                .navigationSplitViewColumnWidth(min: 220, ideal: 240, max: 300)
+                .navigationSplitViewColumnWidth(
+                    min: AppLayoutConstants.sidebarMinWidth,
+                    ideal: AppLayoutConstants.sidebarIdealWidth,
+                    max: AppLayoutConstants.sidebarMaxWidth
+                )
         } detail: {
             NavigationStack(path: $detailPath) {
                 detailRoot
@@ -36,6 +40,10 @@ struct ContentView: View {
                         }
                     }
             }
+            .navigationSplitViewColumnWidth(
+                min: AppLayoutConstants.detailMinWidth,
+                ideal: AppLayoutConstants.detailIdealWidth
+            )
         }
         .overlay(alignment: .bottomTrailing) {
             if let visibleFeedback {
