@@ -11,6 +11,9 @@ final class ProfileManager {
         }
     }
     var skipClaudeCodeOnboarding: Bool
+    var agentsMdContent: String
+    var agentsMdModifiedAt: Date?
+    var lastAgentsMdSyncDirection: AgentsMdSyncDirection?
     var selectedProvider: ProviderKind = .claudeCode {
         didSet {
             ensureSelection(for: selectedProvider)
@@ -47,6 +50,8 @@ final class ProfileManager {
         self.profiles = state.profiles
         self.apiProviders = state.apiProviders
         self.skipClaudeCodeOnboarding = state.skipClaudeCodeOnboarding
+        self.agentsMdContent = state.agentsMdContent
+        self.agentsMdModifiedAt = state.agentsMdModifiedAt
 
         rebuildIndexes()
         ensureDefaults()
@@ -189,7 +194,9 @@ final class ProfileManager {
             try store.save(AgentsHubState(
                 profiles: profiles,
                 apiProviders: apiProviders,
-                skipClaudeCodeOnboarding: skipClaudeCodeOnboarding
+                skipClaudeCodeOnboarding: skipClaudeCodeOnboarding,
+                agentsMdContent: agentsMdContent,
+                agentsMdModifiedAt: agentsMdModifiedAt
             ))
         } catch {
             errorMessage = error.localizedDescription
@@ -543,6 +550,9 @@ extension ProfileManager {
         profiles = state.profiles
         apiProviders = state.apiProviders
         skipClaudeCodeOnboarding = state.skipClaudeCodeOnboarding
+        agentsMdContent = state.agentsMdContent
+        agentsMdModifiedAt = state.agentsMdModifiedAt
+        lastAgentsMdSyncDirection = nil
         selectedProvider = .claudeCode
         selectedProfileIDs.removeAll()
         selectedAPIProviderID = nil
@@ -555,5 +565,93 @@ extension ProfileManager {
         statusMessage = LocalizationManager.localize(LocalizationKeys.statusStateReset)
         errorMessage = nil
         save()
+    }
+}
+
+// MARK: - Agents.md Management
+extension ProfileManager {
+    private var agentsMdManager: AgentsMdManager {
+        AgentsMdManager()
+    }
+
+    func syncAgentsMd() {
+        do {
+            let result = try agentsMdManager.sync(
+                appContent: agentsMdContent,
+                appModifiedAt: agentsMdModifiedAt
+            )
+            if let result {
+                agentsMdContent = result.content
+                agentsMdModifiedAt = result.modifiedAt
+                lastAgentsMdSyncDirection = result.direction
+                save()
+
+                switch result.direction {
+                case .diskToApp:
+                    statusMessage = LocalizationManager.localize("status.agents_md.synced_from_disk")
+                case .appToDisk:
+                    statusMessage = LocalizationManager.localize("status.agents_md.synced_to_disk")
+                case .noChange:
+                    break
+                }
+            } else {
+                lastAgentsMdSyncDirection = .noChange
+                statusMessage = LocalizationManager.localize("status.agents_md.no_change")
+            }
+            errorMessage = nil
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func saveAgentsMd(_ content: String) {
+        agentsMdContent = content
+        agentsMdModifiedAt = .now
+        do {
+            try agentsMdManager.writeToDisk(content)
+            lastAgentsMdSyncDirection = .appToDisk
+            statusMessage = LocalizationManager.localize("status.agents_md.saved")
+            errorMessage = nil
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        save()
+    }
+
+    func loadAgentsMdFromDisk() {
+        do {
+            if let diskState = try agentsMdManager.readFromDisk() {
+                agentsMdContent = diskState.content
+                agentsMdModifiedAt = diskState.modifiedAt
+                lastAgentsMdSyncDirection = .diskToApp
+                save()
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    var agentsMdSyncInfoText: String? {
+        guard let direction = lastAgentsMdSyncDirection else { return nil }
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        formatter.timeStyle = .short
+
+        switch direction {
+        case .diskToApp:
+            let time = agentsMdModifiedAt.map { formatter.string(from: $0) } ?? ""
+            return String(
+                format: LocalizationManager.localize("ui.agents_md.synced_from_disk"),
+                time
+            )
+        case .appToDisk:
+            let time = agentsMdModifiedAt.map { formatter.string(from: $0) } ?? ""
+            return String(
+                format: LocalizationManager.localize("ui.agents_md.synced_to_disk"),
+                time
+            )
+        case .noChange:
+            return LocalizationManager.localize("ui.agents_md.up_to_date")
+        }
     }
 }

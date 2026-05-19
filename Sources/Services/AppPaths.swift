@@ -26,4 +26,7 @@ enum AppPaths {
 
     static let codexDirectory = FileManager.default.homeDirectoryForCurrentUser
         .appendingPathComponent(".codex", isDirectory: true)
+
+    static let codexAgentsMdURL = FileManager.default.homeDirectoryForCurrentUser
+        .appendingPathComponent(".codex/AGENTS.md")
 }

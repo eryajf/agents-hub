@@ -158,5 +158,21 @@
 "ui.sessions.delete_confirmation_detail" = "这会移除本地会话文件，且无法撤销。";
 "ui.sessions.unknown_project" = "未知项目";
 
+/* Agents.md */
+"ui.agents_md.title" = "AGENTS.md";
+"ui.agents_md.description" = "为你的项目向 Codex 提供额外说明和上下文。";
+"ui.agents_md.learn_more" = "了解更多";
+"ui.agents_md.sync" = "同步";
+"ui.agents_md.sync_help" = "与磁盘文件对比，同步较新的版本";
+"ui.agents_md.save" = "保存";
+"ui.agents_md.save_help" = "将内容保存到磁盘和应用状态";
+"ui.agents_md.synced_from_disk" = "已从磁盘同步（%@）";
+"ui.agents_md.synced_to_disk" = "已同步到磁盘（%@）";
+"ui.agents_md.up_to_date" = "已是最新";
+"status.agents_md.synced_from_disk" = "AGENTS.md 已从磁盘同步。";
+"status.agents_md.synced_to_disk" = "AGENTS.md 已同步到磁盘。";
+"status.agents_md.no_change" = "AGENTS.md 已是最新。";
+"status.agents_md.saved" = "AGENTS.md 已保存。";
+
 /* Errors */
 "error.invalid_url" = "无效 URL";

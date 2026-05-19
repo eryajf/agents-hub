@@ -180,21 +180,29 @@ struct AgentsHubState: Codable, Sendable {
     var profiles: [APIProfile]
     var apiProviders: [APIProvider]
     var skipClaudeCodeOnboarding: Bool
+    var agentsMdContent: String
+    var agentsMdModifiedAt: Date?
 
     init(
         profiles: [APIProfile],
         apiProviders: [APIProvider],
-        skipClaudeCodeOnboarding: Bool = false
+        skipClaudeCodeOnboarding: Bool = false,
+        agentsMdContent: String = "",
+        agentsMdModifiedAt: Date? = nil
     ) {
         self.profiles = profiles
         self.apiProviders = apiProviders
         self.skipClaudeCodeOnboarding = skipClaudeCodeOnboarding
+        self.agentsMdContent = agentsMdContent
+        self.agentsMdModifiedAt = agentsMdModifiedAt
     }
 
     enum CodingKeys: String, CodingKey {
         case profiles
         case apiProviders
         case skipClaudeCodeOnboarding
+        case agentsMdContent
+        case agentsMdModifiedAt
     }
 
     init(from decoder: Decoder) throws {
@@ -202,6 +210,8 @@ struct AgentsHubState: Codable, Sendable {
         profiles = try container.decodeIfPresent([APIProfile].self, forKey: .profiles) ?? []
         apiProviders = try container.decodeIfPresent([APIProvider].self, forKey: .apiProviders) ?? []
         skipClaudeCodeOnboarding = try container.decodeIfPresent(Bool.self, forKey: .skipClaudeCodeOnboarding) ?? false
+        agentsMdContent = try container.decodeIfPresent(String.self, forKey: .agentsMdContent) ?? ""
+        agentsMdModifiedAt = try container.decodeIfPresent(Date.self, forKey: .agentsMdModifiedAt)
     }
 
     func encode(to encoder: Encoder) throws {
@@ -209,6 +219,8 @@ struct AgentsHubState: Codable, Sendable {
         try container.encode(profiles, forKey: .profiles)
         try container.encode(apiProviders, forKey: .apiProviders)
         try container.encode(skipClaudeCodeOnboarding, forKey: .skipClaudeCodeOnboarding)
+        try container.encode(agentsMdContent, forKey: .agentsMdContent)
+        try container.encodeIfPresent(agentsMdModifiedAt, forKey: .agentsMdModifiedAt)
     }
 
     static let empty: AgentsHubState = {

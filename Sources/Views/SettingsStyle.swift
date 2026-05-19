@@ -164,9 +164,20 @@ struct SettingsSelect<Value: Hashable, Options: View>: View {
     }
 }
 
-private struct SettingsCardModifier: ViewModifier {
+private struct SettingsCardModifier<HeaderTrailing: View>: ViewModifier {
     let title: String?
     let subtitle: String?
+    let headerTrailing: HeaderTrailing
+
+    init(
+        title: String?,
+        subtitle: String?,
+        @ViewBuilder headerTrailing: () -> HeaderTrailing
+    ) {
+        self.title = title
+        self.subtitle = subtitle
+        self.headerTrailing = headerTrailing()
+    }
 
     func body(content: Content) -> some View {
         VStack(alignment: .leading, spacing: 7) {
@@ -185,6 +196,8 @@ private struct SettingsCardModifier: ViewModifier {
                             .lineLimit(1)
                             .truncationMode(.middle)
                     }
+
+                    headerTrailing
                 }
                 .padding(.horizontal, 10)
             }
@@ -203,6 +216,20 @@ private struct SettingsCardModifier: ViewModifier {
 
 extension View {
     func settingsCard(_ title: String? = nil, subtitle: String? = nil) -> some View {
-        modifier(SettingsCardModifier(title: title, subtitle: subtitle))
+        modifier(SettingsCardModifier(title: title, subtitle: subtitle) {
+            EmptyView()
+        })
+    }
+
+    func settingsCard<HeaderTrailing: View>(
+        _ title: String? = nil,
+        subtitle: String? = nil,
+        @ViewBuilder headerTrailing: () -> HeaderTrailing
+    ) -> some View {
+        modifier(SettingsCardModifier(
+            title: title,
+            subtitle: subtitle,
+            headerTrailing: headerTrailing
+        ))
     }
 }

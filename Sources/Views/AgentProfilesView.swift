@@ -23,6 +23,9 @@ struct AgentProfilesView: View {
             }
             profilesList
             AgentSessionsView(sessionManager: sessionManager, provider: provider)
+            if provider == .codex {
+                agentsMdSection
+            }
             targetFiles
         }
         .navigationTitle(provider.displayName)
@@ -106,6 +109,44 @@ struct AgentProfilesView: View {
             }
         }
         .settingsCard(L.string("ui.agent_profiles.shared_settings", using: lm))
+    }
+
+    private var agentsMdSection: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            AgentsMdEditorView(
+                content: agentsMdContentBinding,
+                lastSyncInfo: manager.agentsMdSyncInfoText,
+                onSync: { manager.syncAgentsMd() },
+                onSave: { manager.saveAgentsMd(manager.agentsMdContent) }
+            )
+            .padding(.horizontal, 12)
+            .padding(.vertical, 9)
+        }
+        .settingsCard(L.string("ui.agents_md.title", using: lm)) {
+            HStack(spacing: 8) {
+                Text(L.string("ui.agents_md.description", using: lm))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+
+                Link(destination: URL(string: "https://developers.openai.com/codex/guides/agents-md#create-global-guidance")!) {
+                    Label(L.string("ui.agents_md.learn_more", using: lm), systemImage: "questionmark.circle")
+                        .font(.caption)
+                }
+            }
+        }
+        .onAppear {
+            manager.syncAgentsMd()
+        }
+    }
+
+    private var agentsMdContentBinding: Binding<String> {
+        Binding {
+            manager.agentsMdContent
+        } set: { newValue in
+            manager.agentsMdContent = newValue
+        }
     }
 
     private var targetFiles: some View {
