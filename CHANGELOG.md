@@ -1,3 +1,18 @@
+## v0.0.6
+
+> 本次更新让你可以更快地通过预设创建 API Provider，在 Codex 设置中直接编辑并同步 AGENTS.md、控制自动更新，并让界面在较窄窗口下也更稳定易读。
+
+### 新增功能
+
+- **api**：support creating API providers from presets
+- **codex**：
+  - support managing AGENTS.md
+  - add automatic update toggle
+
+### 问题修复
+
+- **ui**：prevent detail pane from collapsing too narrow
+
 ## v0.0.5
 
 > 本次更新让你可以按项目更清晰地查看和管理本地 CLI 会话、快速复制恢复命令，并在更明确的设置信息与删除确认提示下更安心地操作。
