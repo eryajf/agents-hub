@@ -114,6 +114,8 @@
 "ui.profile.default_haiku_model" = "默认 Haiku 模型";
 "ui.profile.skip_claude_onboarding" = "跳过 Claude 初始引导";
 "ui.profile.skip_claude_onboarding_detail" = "使用第三方 API 时跳过 Claude Code 初次安装确认";
+"ui.profile.disable_codex_automatic_updates" = "禁用 Codex 自动更新";
+"ui.profile.disable_codex_automatic_updates_detail" = "写入 Codex Desktop 的 Sparkle defaults，停止自动检查和安装更新";
 "ui.profile.configuration_files" = "配置文件";
 "ui.profile.apply_target" = "应用目标";
 "ui.profile.target_claude_detail" = "将 env 值写入 Claude Code 设置";
@@ -137,6 +139,7 @@
 "status.profile_applied" = "%@ 已应用到 %@。";
 "status.api_provider_saved" = "%@ 供应商已保存。";
 "status.claude_onboarding_updated" = "Claude 初始引导状态已更新。";
+"status.codex_automatic_updates_updated" = "Codex 自动更新设置已更新。";
 "status.state_reset" = "Agents Hub 数据已重置。";
 
 /* Defaults */

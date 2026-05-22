@@ -114,6 +114,8 @@
 "ui.profile.default_haiku_model" = "Default Haiku Model";
 "ui.profile.skip_claude_onboarding" = "Skip Claude Onboarding";
 "ui.profile.skip_claude_onboarding_detail" = "Skip Claude Code first-run confirmation when using a third-party API";
+"ui.profile.disable_codex_automatic_updates" = "Disable Codex Automatic Updates";
+"ui.profile.disable_codex_automatic_updates_detail" = "Writes Sparkle defaults for Codex Desktop to stop automatic checks and installs";
 "ui.profile.configuration_files" = "Configuration Files";
 "ui.profile.apply_target" = "Apply Target";
 "ui.profile.target_claude_detail" = "Writes env values into Claude Code settings";
@@ -137,6 +139,7 @@
 "status.profile_applied" = "%@ applied to %@.";
 "status.api_provider_saved" = "%@ provider saved.";
 "status.claude_onboarding_updated" = "Claude onboarding state updated.";
+"status.codex_automatic_updates_updated" = "Codex automatic update setting updated.";
 "status.state_reset" = "Agents Hub data has been reset.";
 
 /* Defaults */

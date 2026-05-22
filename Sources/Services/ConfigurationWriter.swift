@@ -152,6 +152,20 @@ struct ConfigurationWriter: Sendable {
         return dictionary
     }
 
+    func syncCodexAutomaticUpdates(disabled: Bool) {
+        guard let defaults = UserDefaults(suiteName: codexDefaultsDomain) else { return }
+
+        for key in codexAutomaticUpdateKeys {
+            if disabled {
+                defaults.set(false, forKey: key)
+            } else {
+                defaults.removeObject(forKey: key)
+            }
+        }
+
+        defaults.synchronize()
+    }
+
     private func tomlEscape(_ value: String) -> String {
         value
             .replacingOccurrences(of: "\\", with: "\\\\")
@@ -295,6 +309,17 @@ struct ConfigurationWriter: Sendable {
 
     private var codexModelProviderID: String {
         "agents-hub"
+    }
+
+    private var codexDefaultsDomain: String {
+        "com.openai.codex"
+    }
+
+    private var codexAutomaticUpdateKeys: [String] {
+        [
+            "SUEnableAutomaticChecks",
+            "SUAutomaticallyUpdate"
+        ]
     }
 }
 

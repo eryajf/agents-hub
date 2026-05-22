@@ -21,6 +21,9 @@ struct AgentProfilesView: View {
             if provider == .claudeCode {
                 claudeSharedSettings
             }
+            if provider == .codex {
+                codexSharedSettings
+            }
             profilesList
             AgentSessionsView(sessionManager: sessionManager, provider: provider)
             if provider == .codex {
@@ -105,6 +108,22 @@ struct AgentProfilesView: View {
                 )
             } trailing: {
                 Toggle("", isOn: skipClaudeOnboardingBinding())
+                    .labelsHidden()
+            }
+        }
+        .settingsCard(L.string("ui.agent_profiles.shared_settings", using: lm))
+    }
+
+    private var codexSharedSettings: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            SettingsRow {
+                FieldLabel(
+                    L.string("ui.profile.disable_codex_automatic_updates", using: lm),
+                    detail: L.string("ui.profile.disable_codex_automatic_updates_detail", using: lm),
+                    detailLineLimit: 2
+                )
+            } trailing: {
+                Toggle("", isOn: disableCodexAutomaticUpdatesBinding())
                     .labelsHidden()
             }
         }
@@ -233,6 +252,14 @@ struct AgentProfilesView: View {
             manager.skipClaudeCodeOnboarding
         } set: { newValue in
             manager.updateSkipClaudeCodeOnboarding(newValue)
+        }
+    }
+
+    private func disableCodexAutomaticUpdatesBinding() -> Binding<Bool> {
+        Binding {
+            manager.disableCodexAutomaticUpdates
+        } set: { newValue in
+            manager.updateDisableCodexAutomaticUpdates(newValue)
         }
     }
 

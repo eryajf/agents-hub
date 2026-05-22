@@ -89,6 +89,8 @@ Codex profiles are written to `~/.codex/config.toml` and `~/.codex/auth.json`.
 
 Agents Hub writes Codex profiles with `wire_api = "responses"` and `requires_openai_auth = true`. The managed Codex provider ID is always `model_providers.agents-hub`; its display name can be either `Agents Hub` or the selected profile name.
 
+Codex also has a shared `Disable Codex Automatic Updates` setting. When enabled, Agents Hub writes Codex Desktop Sparkle defaults and sets `SUEnableAutomaticChecks` and `SUAutomaticallyUpdate` to `false`.
+
 ## Check Local Status
 
 The `Overview` page shows:

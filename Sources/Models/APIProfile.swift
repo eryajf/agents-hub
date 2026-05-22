@@ -180,6 +180,7 @@ struct AgentsHubState: Codable, Sendable {
     var profiles: [APIProfile]
     var apiProviders: [APIProvider]
     var skipClaudeCodeOnboarding: Bool
+    var disableCodexAutomaticUpdates: Bool
     var agentsMdContent: String
     var agentsMdModifiedAt: Date?
 
@@ -187,12 +188,14 @@ struct AgentsHubState: Codable, Sendable {
         profiles: [APIProfile],
         apiProviders: [APIProvider],
         skipClaudeCodeOnboarding: Bool = false,
+        disableCodexAutomaticUpdates: Bool = false,
         agentsMdContent: String = "",
         agentsMdModifiedAt: Date? = nil
     ) {
         self.profiles = profiles
         self.apiProviders = apiProviders
         self.skipClaudeCodeOnboarding = skipClaudeCodeOnboarding
+        self.disableCodexAutomaticUpdates = disableCodexAutomaticUpdates
         self.agentsMdContent = agentsMdContent
         self.agentsMdModifiedAt = agentsMdModifiedAt
     }
@@ -201,6 +204,7 @@ struct AgentsHubState: Codable, Sendable {
         case profiles
         case apiProviders
         case skipClaudeCodeOnboarding
+        case disableCodexAutomaticUpdates
         case agentsMdContent
         case agentsMdModifiedAt
     }
@@ -210,6 +214,10 @@ struct AgentsHubState: Codable, Sendable {
         profiles = try container.decodeIfPresent([APIProfile].self, forKey: .profiles) ?? []
         apiProviders = try container.decodeIfPresent([APIProvider].self, forKey: .apiProviders) ?? []
         skipClaudeCodeOnboarding = try container.decodeIfPresent(Bool.self, forKey: .skipClaudeCodeOnboarding) ?? false
+        disableCodexAutomaticUpdates = try container.decodeIfPresent(
+            Bool.self,
+            forKey: .disableCodexAutomaticUpdates
+        ) ?? false
         agentsMdContent = try container.decodeIfPresent(String.self, forKey: .agentsMdContent) ?? ""
         agentsMdModifiedAt = try container.decodeIfPresent(Date.self, forKey: .agentsMdModifiedAt)
     }
@@ -219,6 +227,7 @@ struct AgentsHubState: Codable, Sendable {
         try container.encode(profiles, forKey: .profiles)
         try container.encode(apiProviders, forKey: .apiProviders)
         try container.encode(skipClaudeCodeOnboarding, forKey: .skipClaudeCodeOnboarding)
+        try container.encode(disableCodexAutomaticUpdates, forKey: .disableCodexAutomaticUpdates)
         try container.encode(agentsMdContent, forKey: .agentsMdContent)
         try container.encodeIfPresent(agentsMdModifiedAt, forKey: .agentsMdModifiedAt)
     }

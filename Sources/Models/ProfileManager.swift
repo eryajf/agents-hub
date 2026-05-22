@@ -11,6 +11,7 @@ final class ProfileManager {
         }
     }
     var skipClaudeCodeOnboarding: Bool
+    var disableCodexAutomaticUpdates: Bool
     var agentsMdContent: String
     var agentsMdModifiedAt: Date?
     var lastAgentsMdSyncDirection: AgentsMdSyncDirection?
@@ -50,6 +51,7 @@ final class ProfileManager {
         self.profiles = state.profiles
         self.apiProviders = state.apiProviders
         self.skipClaudeCodeOnboarding = state.skipClaudeCodeOnboarding
+        self.disableCodexAutomaticUpdates = state.disableCodexAutomaticUpdates
         self.agentsMdContent = state.agentsMdContent
         self.agentsMdModifiedAt = state.agentsMdModifiedAt
 
@@ -195,6 +197,7 @@ final class ProfileManager {
                 profiles: profiles,
                 apiProviders: apiProviders,
                 skipClaudeCodeOnboarding: skipClaudeCodeOnboarding,
+                disableCodexAutomaticUpdates: disableCodexAutomaticUpdates,
                 agentsMdContent: agentsMdContent,
                 agentsMdModifiedAt: agentsMdModifiedAt
             ))
@@ -545,11 +548,22 @@ extension ProfileManager {
         save()
     }
 
+    func updateDisableCodexAutomaticUpdates(_ disabled: Bool) {
+        guard disableCodexAutomaticUpdates != disabled else { return }
+
+        disableCodexAutomaticUpdates = disabled
+        writer.syncCodexAutomaticUpdates(disabled: disabled)
+        statusMessage = LocalizationManager.localize("status.codex_automatic_updates_updated")
+        errorMessage = nil
+        save()
+    }
+
     func resetState() {
         let state = AgentsHubState.empty
         profiles = state.profiles
         apiProviders = state.apiProviders
         skipClaudeCodeOnboarding = state.skipClaudeCodeOnboarding
+        disableCodexAutomaticUpdates = state.disableCodexAutomaticUpdates
         agentsMdContent = state.agentsMdContent
         agentsMdModifiedAt = state.agentsMdModifiedAt
         lastAgentsMdSyncDirection = nil

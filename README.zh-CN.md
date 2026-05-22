@@ -89,6 +89,8 @@ Codex 配置会写入 `~/.codex/config.toml` 和 `~/.codex/auth.json`。
 
 Agents Hub 会以 `wire_api = "responses"` 和 `requires_openai_auth = true` 写入 Codex 配置。受管理的 Codex provider ID 始终写为 `model_providers.agents-hub`；显示名称可以使用 `Agents Hub`，也可以使用选中的配置名称。
 
+Codex 还有一个共享的 `禁用 Codex 自动更新` 设置。启用后，Agents Hub 会写入 Codex Desktop 的 Sparkle defaults，并将 `SUEnableAutomaticChecks` 与 `SUAutomaticallyUpdate` 设置为 `false`。
+
 ## 检查本地状态
 
 `概览` 页面会显示：
