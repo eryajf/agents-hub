@@ -116,6 +116,23 @@
 "ui.profile.skip_claude_onboarding_detail" = "Skip Claude Code first-run confirmation when using a third-party API";
 "ui.profile.disable_codex_automatic_updates" = "Disable Codex Automatic Updates";
 "ui.profile.disable_codex_automatic_updates_detail" = "Writes Sparkle defaults for Codex Desktop to stop automatic checks and installs";
+"ui.codex_desktop_patch.title" = "Codex Desktop Patch";
+"ui.codex_desktop_patch.installation" = "Installation";
+"ui.codex_desktop_patch.fast_mode" = "Fast Mode";
+"ui.codex_desktop_patch.fast_mode_detail" = "Removes the local ChatGPT sign-in gate for Fast mode UI. Service availability still depends on your Codex account.";
+"ui.codex_desktop_patch.plugins" = "Plugins";
+"ui.codex_desktop_patch.plugins_detail" = "Enables local plugin and skills entry points. It does not bypass account, workspace, or admin requirements.";
+"ui.codex_desktop_patch.actions" = "Patch Controls";
+"ui.codex_desktop_patch.actions_detail" = "Backs up app.asar and Info.plist before patching, then supports restoring the original files.";
+"ui.codex_desktop_patch.apply" = "Apply";
+"ui.codex_desktop_patch.restore" = "Restore";
+"ui.codex_desktop_patch.state_unpatched" = "Ready";
+"ui.codex_desktop_patch.state_patched" = "Patched";
+"ui.codex_desktop_patch.state_patched_all" = "Fast + Plugins";
+"ui.codex_desktop_patch.state_patched_fast" = "Fast";
+"ui.codex_desktop_patch.state_patched_plugins" = "Plugins";
+"ui.codex_desktop_patch.state_damaged" = "Needs restore";
+"ui.codex_desktop_patch.state_unsupported" = "Unsupported";
 "ui.profile.configuration_files" = "Configuration Files";
 "ui.profile.apply_target" = "Apply Target";
 "ui.profile.target_claude_detail" = "Writes env values into Claude Code settings";
@@ -140,6 +157,8 @@
 "status.api_provider_saved" = "%@ provider saved.";
 "status.claude_onboarding_updated" = "Claude onboarding state updated.";
 "status.codex_automatic_updates_updated" = "Codex automatic update setting updated.";
+"status.codex_desktop_patch_applied" = "Codex Desktop patch applied.";
+"status.codex_desktop_patch_restored" = "Codex Desktop restored from backup.";
 "status.state_reset" = "Agents Hub data has been reset.";
 
 /* Defaults */

@@ -29,4 +29,7 @@ enum AppPaths {
 
     static let codexAgentsMdURL = FileManager.default.homeDirectoryForCurrentUser
         .appendingPathComponent(".codex/AGENTS.md")
+
+    static let codexDesktopBackupDirectory = configDirectory
+        .appendingPathComponent("codex-desktop-backups", isDirectory: true)
 }

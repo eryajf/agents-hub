@@ -23,6 +23,7 @@ struct AgentProfilesView: View {
             }
             if provider == .codex {
                 codexSharedSettings
+                codexDesktopPatchSection
             }
             profilesList
             AgentSessionsView(sessionManager: sessionManager, provider: provider)
@@ -128,6 +129,91 @@ struct AgentProfilesView: View {
             }
         }
         .settingsCard(L.string("ui.agent_profiles.shared_settings", using: lm))
+    }
+
+    private var codexDesktopPatchSection: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            codexDesktopStatusRow
+            SettingsDivider()
+            codexDesktopPatchOptionRow(
+                title: L.string("ui.codex_desktop_patch.fast_mode", using: lm),
+                detail: L.string("ui.codex_desktop_patch.fast_mode_detail", using: lm),
+                option: .fastMode
+            )
+            SettingsDivider()
+            codexDesktopPatchOptionRow(
+                title: L.string("ui.codex_desktop_patch.plugins", using: lm),
+                detail: L.string("ui.codex_desktop_patch.plugins_detail", using: lm),
+                option: .plugins
+            )
+            SettingsDivider()
+            SettingsRow {
+                FieldLabel(
+                    L.string("ui.codex_desktop_patch.actions", using: lm),
+                    detail: L.string("ui.codex_desktop_patch.actions_detail", using: lm),
+                    detailLineLimit: 2
+                )
+            } trailing: {
+                HStack(spacing: 8) {
+                    Button {
+                        manager.refreshCodexDesktopPatchStatus()
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                    }
+                    .buttonStyle(.borderless)
+                    .help(L.string("ui.action.refresh", using: lm))
+
+                    Button {
+                        manager.restoreCodexDesktopPatch()
+                    } label: {
+                        Label(L.string("ui.codex_desktop_patch.restore", using: lm), systemImage: "arrow.uturn.backward")
+                    }
+                    .disabled(!codexDesktopCanRestore)
+
+                    Button {
+                        manager.applyCodexDesktopPatch()
+                    } label: {
+                        Label(L.string("ui.codex_desktop_patch.apply", using: lm), systemImage: "wand.and.stars")
+                    }
+                    .disabled(!codexDesktopCanApply)
+                }
+            }
+        }
+        .settingsCard(L.string("ui.codex_desktop_patch.title", using: lm))
+        .onAppear {
+            if manager.codexDesktopPatchStatus == nil {
+                manager.refreshCodexDesktopPatchStatus()
+            }
+        }
+    }
+
+    private var codexDesktopStatusRow: some View {
+        SettingsRow {
+            FieldLabel(
+                L.string("ui.codex_desktop_patch.installation", using: lm),
+                detail: codexDesktopStatusDetail,
+                detailLineLimit: 2
+            )
+        } trailing: {
+            Text(codexDesktopPatchStateText)
+                .font(.caption.weight(.medium))
+                .foregroundStyle(codexDesktopPatchStateColor)
+                .lineLimit(1)
+        }
+    }
+
+    private func codexDesktopPatchOptionRow(
+        title: String,
+        detail: String,
+        option: CodexDesktopPatchOptions
+    ) -> some View {
+        SettingsRow {
+            FieldLabel(title, detail: detail, detailLineLimit: 2)
+        } trailing: {
+            Toggle("", isOn: codexDesktopPatchOptionBinding(option))
+                .labelsHidden()
+                .disabled(!codexDesktopCapabilityAvailable(option))
+        }
     }
 
     private var agentsMdSection: some View {
@@ -260,6 +346,90 @@ struct AgentProfilesView: View {
             manager.disableCodexAutomaticUpdates
         } set: { newValue in
             manager.updateDisableCodexAutomaticUpdates(newValue)
+        }
+    }
+
+    private func codexDesktopPatchOptionBinding(_ option: CodexDesktopPatchOptions) -> Binding<Bool> {
+        Binding {
+            manager.codexDesktopPatchOptions.contains(option)
+        } set: { newValue in
+            manager.updateCodexDesktopPatchOption(option, enabled: newValue)
+        }
+    }
+
+    private func codexDesktopCapabilityAvailable(_ option: CodexDesktopPatchOptions) -> Bool {
+        manager.codexDesktopPatchStatus?.availableCapabilities.contains(option) == true
+    }
+
+    private var codexDesktopCanApply: Bool {
+        guard !manager.codexDesktopPatchOptions.isEmpty,
+              let status = manager.codexDesktopPatchStatus
+        else { return false }
+
+        switch status.patchState {
+        case .unpatched, .patched:
+            return true
+        case .damaged, .notInstalled, .unsupported:
+            return false
+        }
+    }
+
+    private var codexDesktopCanRestore: Bool {
+        manager.codexDesktopPatchStatus?.backupURL != nil
+    }
+
+    private var codexDesktopStatusDetail: String {
+        guard let status = manager.codexDesktopPatchStatus else {
+            return L.string("status.not_checked", using: lm)
+        }
+
+        guard let installation = status.installation else {
+            return L.string("ui.label.no_local_installation", using: lm)
+        }
+
+        return "\(installation.shortVersion) · \(installation.appURL.path())"
+    }
+
+    private var codexDesktopPatchStateText: String {
+        guard let status = manager.codexDesktopPatchStatus else {
+            return L.string("status.not_checked", using: lm)
+        }
+
+        switch status.patchState {
+        case .notInstalled:
+            return L.string("ui.label.not_installed", using: lm)
+        case .unpatched:
+            return L.string("ui.codex_desktop_patch.state_unpatched", using: lm)
+        case let .patched(options):
+            if options.contains([.fastMode, .plugins]) {
+                return L.string("ui.codex_desktop_patch.state_patched_all", using: lm)
+            }
+            if options.contains(.fastMode) {
+                return L.string("ui.codex_desktop_patch.state_patched_fast", using: lm)
+            }
+            if options.contains(.plugins) {
+                return L.string("ui.codex_desktop_patch.state_patched_plugins", using: lm)
+            }
+            return L.string("ui.codex_desktop_patch.state_patched", using: lm)
+        case .damaged:
+            return L.string("ui.codex_desktop_patch.state_damaged", using: lm)
+        case .unsupported:
+            return L.string("ui.codex_desktop_patch.state_unsupported", using: lm)
+        }
+    }
+
+    private var codexDesktopPatchStateColor: Color {
+        guard let status = manager.codexDesktopPatchStatus else { return .secondary }
+
+        switch status.patchState {
+        case .patched:
+            return .green
+        case .damaged, .unsupported:
+            return .orange
+        case .notInstalled:
+            return .secondary
+        case .unpatched:
+            return .blue
         }
     }
 

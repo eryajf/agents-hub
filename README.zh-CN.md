@@ -91,6 +91,23 @@ Agents Hub 会以 `wire_api = "responses"` 和 `requires_openai_auth = true` 写
 
 Codex 还有一个共享的 `禁用 Codex 自动更新` 设置。启用后，Agents Hub 会写入 Codex Desktop 的 Sparkle defaults，并将 `SUEnableAutomaticChecks` 与 `SUAutomaticallyUpdate` 设置为 `false`。
 
+## Codex 桌面端补丁能力
+
+Codex 页面可以检测并 patch 安装在 `/Applications/Codex.app` 或 `~/Applications/Codex.app` 的 Codex Desktop。应用补丁前，Agents Hub 会备份 `Contents/Resources/app.asar` 和 `Contents/Info.plist`，应用版本匹配且长度不变的替换，更新 `Info.plist` 中的 Electron asar hash，使用 Electron JIT entitlements 对应用进行 ad-hoc 重签，并支持从备份恢复。
+
+当前补丁能力：
+
+- `Fast Mode`：启用本地 Fast 模式 UI 门槛。
+- `Plugins`：启用本地插件与技能入口，包括插件页面、详情页、可用性检查和安装流程门槛。
+
+推荐使用步骤：
+
+1. 先彻底退出 Codex Desktop。
+2. 回到 Agents Hub，应用选中的 Codex Desktop 补丁。
+3. 重新打开 Codex Desktop，开始使用已启用的能力。
+
+这两项能力已在 Codex Desktop `26.519.41501` 版本中测试验证 OK。这些补丁不会绕过 Codex 账号、工作区、管理员权限或服务 tier 要求。
+
 ## 检查本地状态
 
 `概览` 页面会显示：
@@ -110,6 +127,7 @@ Codex 还有一个共享的 `禁用 Codex 自动更新` 设置。启用后，Age
 | `~/.claude.json` | 启用共享设置时写入的 Claude Code onboarding 状态 |
 | `~/.codex/config.toml` | Codex 模型与供应商配置 |
 | `~/.codex/auth.json` | Codex API Key 认证内容 |
+| `~/.config/agents-hub/codex-desktop-backups` | Codex Desktop 补丁备份 |
 
 ## 本地构建
 

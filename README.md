@@ -91,6 +91,23 @@ Agents Hub writes Codex profiles with `wire_api = "responses"` and `requires_ope
 
 Codex also has a shared `Disable Codex Automatic Updates` setting. When enabled, Agents Hub writes Codex Desktop Sparkle defaults and sets `SUEnableAutomaticChecks` and `SUAutomaticallyUpdate` to `false`.
 
+## Codex Desktop Patch Capabilities
+
+The Codex page can inspect and patch Codex Desktop installations found at `/Applications/Codex.app` or `~/Applications/Codex.app`. Before applying a patch, Agents Hub backs up `Contents/Resources/app.asar` and `Contents/Info.plist`, applies version-matched same-length replacements, updates the Electron asar hash in `Info.plist`, ad-hoc re-signs the app with Electron JIT entitlements, and supports restoring the backup.
+
+Current patch capabilities:
+
+- `Fast Mode`: enables the local Fast mode UI gate.
+- `Plugins`: enables local plugin and skills entry points, including plugin page, detail, availability, and install-flow gates.
+
+Recommended usage flow:
+
+1. Fully quit Codex Desktop.
+2. Return to Agents Hub and apply the selected Codex Desktop patches.
+3. Reopen Codex Desktop and start using the enabled capabilities.
+
+Both capabilities have been tested and verified OK with Codex Desktop `26.519.41501`. These patches do not bypass Codex account, workspace, admin, or service-tier requirements.
+
 ## Check Local Status
 
 The `Overview` page shows:
@@ -110,6 +127,7 @@ Use `Refresh` to re-run API checks and local version detection.
 | `~/.claude.json` | Claude Code onboarding state when the shared setting is enabled |
 | `~/.codex/config.toml` | Codex model and provider configuration |
 | `~/.codex/auth.json` | Codex API key auth payload |
+| `~/.config/agents-hub/codex-desktop-backups` | Codex Desktop patch backups |
 
 ## Build Locally
 

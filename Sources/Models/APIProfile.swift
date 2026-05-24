@@ -181,6 +181,7 @@ struct AgentsHubState: Codable, Sendable {
     var apiProviders: [APIProvider]
     var skipClaudeCodeOnboarding: Bool
     var disableCodexAutomaticUpdates: Bool
+    var codexDesktopPatchOptions: CodexDesktopPatchOptions
     var agentsMdContent: String
     var agentsMdModifiedAt: Date?
 
@@ -189,6 +190,7 @@ struct AgentsHubState: Codable, Sendable {
         apiProviders: [APIProvider],
         skipClaudeCodeOnboarding: Bool = false,
         disableCodexAutomaticUpdates: Bool = false,
+        codexDesktopPatchOptions: CodexDesktopPatchOptions = [],
         agentsMdContent: String = "",
         agentsMdModifiedAt: Date? = nil
     ) {
@@ -196,6 +198,7 @@ struct AgentsHubState: Codable, Sendable {
         self.apiProviders = apiProviders
         self.skipClaudeCodeOnboarding = skipClaudeCodeOnboarding
         self.disableCodexAutomaticUpdates = disableCodexAutomaticUpdates
+        self.codexDesktopPatchOptions = codexDesktopPatchOptions
         self.agentsMdContent = agentsMdContent
         self.agentsMdModifiedAt = agentsMdModifiedAt
     }
@@ -205,6 +208,7 @@ struct AgentsHubState: Codable, Sendable {
         case apiProviders
         case skipClaudeCodeOnboarding
         case disableCodexAutomaticUpdates
+        case codexDesktopPatchOptions
         case agentsMdContent
         case agentsMdModifiedAt
     }
@@ -218,6 +222,10 @@ struct AgentsHubState: Codable, Sendable {
             Bool.self,
             forKey: .disableCodexAutomaticUpdates
         ) ?? false
+        codexDesktopPatchOptions = try container.decodeIfPresent(
+            CodexDesktopPatchOptions.self,
+            forKey: .codexDesktopPatchOptions
+        ) ?? []
         agentsMdContent = try container.decodeIfPresent(String.self, forKey: .agentsMdContent) ?? ""
         agentsMdModifiedAt = try container.decodeIfPresent(Date.self, forKey: .agentsMdModifiedAt)
     }
@@ -228,6 +236,7 @@ struct AgentsHubState: Codable, Sendable {
         try container.encode(apiProviders, forKey: .apiProviders)
         try container.encode(skipClaudeCodeOnboarding, forKey: .skipClaudeCodeOnboarding)
         try container.encode(disableCodexAutomaticUpdates, forKey: .disableCodexAutomaticUpdates)
+        try container.encode(codexDesktopPatchOptions, forKey: .codexDesktopPatchOptions)
         try container.encode(agentsMdContent, forKey: .agentsMdContent)
         try container.encodeIfPresent(agentsMdModifiedAt, forKey: .agentsMdModifiedAt)
     }

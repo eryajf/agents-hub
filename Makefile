@@ -25,7 +25,7 @@ build:
 	swift build -c release
 
 run:
-	swift run $(TARGET_NAME)
+	./script/build_and_run.sh
 
 clean:
 	swift package clean

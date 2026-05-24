@@ -12,6 +12,8 @@ final class ProfileManager {
     }
     var skipClaudeCodeOnboarding: Bool
     var disableCodexAutomaticUpdates: Bool
+    var codexDesktopPatchOptions: CodexDesktopPatchOptions
+    var codexDesktopPatchStatus: CodexDesktopPatchStatus?
     var agentsMdContent: String
     var agentsMdModifiedAt: Date?
     var lastAgentsMdSyncDirection: AgentsMdSyncDirection?
@@ -43,15 +45,22 @@ final class ProfileManager {
 
     private let store: ProfileStore
     private let writer: ConfigurationWriter
+    private let codexDesktopPatcher: CodexDesktopPatcher
 
-    init(store: ProfileStore = ProfileStore(), writer: ConfigurationWriter = ConfigurationWriter()) {
+    init(
+        store: ProfileStore = ProfileStore(),
+        writer: ConfigurationWriter = ConfigurationWriter(),
+        codexDesktopPatcher: CodexDesktopPatcher = CodexDesktopPatcher()
+    ) {
         self.store = store
         self.writer = writer
+        self.codexDesktopPatcher = codexDesktopPatcher
         let state = store.load()
         self.profiles = state.profiles
         self.apiProviders = state.apiProviders
         self.skipClaudeCodeOnboarding = state.skipClaudeCodeOnboarding
         self.disableCodexAutomaticUpdates = state.disableCodexAutomaticUpdates
+        self.codexDesktopPatchOptions = state.codexDesktopPatchOptions
         self.agentsMdContent = state.agentsMdContent
         self.agentsMdModifiedAt = state.agentsMdModifiedAt
 
@@ -198,6 +207,7 @@ final class ProfileManager {
                 apiProviders: apiProviders,
                 skipClaudeCodeOnboarding: skipClaudeCodeOnboarding,
                 disableCodexAutomaticUpdates: disableCodexAutomaticUpdates,
+                codexDesktopPatchOptions: codexDesktopPatchOptions,
                 agentsMdContent: agentsMdContent,
                 agentsMdModifiedAt: agentsMdModifiedAt
             ))
@@ -558,12 +568,55 @@ extension ProfileManager {
         save()
     }
 
+    func refreshCodexDesktopPatchStatus() {
+        do {
+            codexDesktopPatchStatus = try codexDesktopPatcher.status()
+            errorMessage = nil
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func updateCodexDesktopPatchOption(_ option: CodexDesktopPatchOptions, enabled: Bool) {
+        if enabled {
+            codexDesktopPatchOptions.insert(option)
+        } else {
+            codexDesktopPatchOptions.remove(option)
+        }
+        save()
+    }
+
+    func applyCodexDesktopPatch() {
+        do {
+            try codexDesktopPatcher.apply(options: codexDesktopPatchOptions)
+            codexDesktopPatchStatus = try codexDesktopPatcher.status()
+            statusMessage = LocalizationManager.localize("status.codex_desktop_patch_applied")
+            errorMessage = nil
+            save()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func restoreCodexDesktopPatch() {
+        do {
+            try codexDesktopPatcher.restore()
+            codexDesktopPatchStatus = try codexDesktopPatcher.status()
+            statusMessage = LocalizationManager.localize("status.codex_desktop_patch_restored")
+            errorMessage = nil
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
     func resetState() {
         let state = AgentsHubState.empty
         profiles = state.profiles
         apiProviders = state.apiProviders
         skipClaudeCodeOnboarding = state.skipClaudeCodeOnboarding
         disableCodexAutomaticUpdates = state.disableCodexAutomaticUpdates
+        codexDesktopPatchOptions = state.codexDesktopPatchOptions
+        codexDesktopPatchStatus = nil
         agentsMdContent = state.agentsMdContent
         agentsMdModifiedAt = state.agentsMdModifiedAt
         lastAgentsMdSyncDirection = nil
