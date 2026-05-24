@@ -33,7 +33,35 @@ on:
         type: string
 
 jobs:
+  release-config:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Sparkle release configuration
+        shell: bash
+        env:
+          SPARKLE_PUBLIC_ED_KEY: ${{ vars.SPARKLE_PUBLIC_ED_KEY }}
+          SPARKLE_PRIVATE_ED_KEY: ${{ secrets.SPARKLE_PRIVATE_ED_KEY }}
+        run: |
+          set -euo pipefail
+
+          missing=0
+          if [[ -z "${SPARKLE_PUBLIC_ED_KEY:-}" ]]; then
+            echo "Missing repository variable: SPARKLE_PUBLIC_ED_KEY" >&2
+            missing=1
+          fi
+
+          if [[ -z "${SPARKLE_PRIVATE_ED_KEY:-}" ]]; then
+            echo "Missing repository secret: SPARKLE_PRIVATE_ED_KEY" >&2
+            missing=1
+          fi
+
+          if [[ "$missing" -ne 0 ]]; then
+            echo "Configure Sparkle keys in Settings -> Secrets and variables -> Actions before running this workflow." >&2
+            exit 1
+          fi
+
   release:
+    needs: release-config
     uses: QuentinHsu/workflow/.github/workflows/macos-swiftpm-sparkle-dmg-release.yml@main
     permissions:
       contents: write
