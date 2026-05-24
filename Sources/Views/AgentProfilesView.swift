@@ -171,9 +171,22 @@ struct AgentProfilesView: View {
                     .disabled(!codexDesktopCanRestore)
 
                     Button {
+                        manager.rebuildCodexLocalHistory()
+                    } label: {
+                        Label(L.string("ui.codex_desktop_patch.rebuild_history", using: lm), systemImage: "clock.arrow.circlepath")
+                    }
+
+                    Button {
+                        manager.launchCodexWithRuntimePatch()
+                    } label: {
+                        Label(L.string("ui.codex_desktop_patch.runtime_launch", using: lm), systemImage: "play.fill")
+                    }
+                    .disabled(!codexDesktopCanRuntimeLaunch)
+
+                    Button {
                         manager.applyCodexDesktopPatch()
                     } label: {
-                        Label(L.string("ui.codex_desktop_patch.apply", using: lm), systemImage: "wand.and.stars")
+                        Label(L.string("ui.codex_desktop_patch.apply_legacy", using: lm), systemImage: "wand.and.stars")
                     }
                     .disabled(!codexDesktopCanApply)
                 }
@@ -362,6 +375,19 @@ struct AgentProfilesView: View {
     }
 
     private var codexDesktopCanApply: Bool {
+        guard !manager.codexDesktopPatchOptions.isEmpty,
+              let status = manager.codexDesktopPatchStatus
+        else { return false }
+
+        switch status.patchState {
+        case .unpatched, .patched:
+            return true
+        case .damaged, .notInstalled, .unsupported:
+            return false
+        }
+    }
+
+    private var codexDesktopCanRuntimeLaunch: Bool {
         guard !manager.codexDesktopPatchOptions.isEmpty,
               let status = manager.codexDesktopPatchStatus
         else { return false }

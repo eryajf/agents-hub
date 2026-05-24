@@ -190,6 +190,46 @@ struct CodexDesktopPatcherTests {
             .contains(pluginPatched))
     }
 
+    @Test("Patcher skips plugin legacy repair when the broken legacy marker is absent")
+    func skipsPluginLegacyRepairWhenAbsent() throws {
+        let fixture = try CodexDesktopFixture(
+            shortVersion: "26.519.41501",
+            files: [
+                "webview/assets/app-main-DG-Mf4Wj.js": "if({authMethod:c}=Ba(),l=Li(`533078438`),u=Cc(c),d=e&&l&&u,f=bs({hostId:Tt}),p=e&&f&&!u,){return disabled}",
+                "webview/assets/skills-page-C8PW4EqX.js": "function page(){let m=f,g,v;return m}",
+                "webview/assets/plugin-detail-page-jAJa26RM.js": "function detail(){const {authMethod:i}=oe();if(Be(i)){return null}}",
+                "webview/assets/check-plugin-availability-6p9UsIaB.js": "function check(){let F=w.length>0&&N===w.length?M?`disabled-by-admin`:`connector-unavailable`:null,I;return F}",
+                "webview/assets/use-plugin-install-flow-IT_xMrDV.js": "function install(){let g=m,_=(u?.apps.length??0)>0&&u?.summary.authPolicy===`ON_INSTALL`,v;return _}"
+            ]
+        )
+        let originalHash = sha256Hex(Data(contentsOf: fixture.asarURL))
+        let manifest = CodexDesktopPatchManifest(
+            shortVersion: "26.519.41501",
+            originalAsarSHA256: originalHash,
+            replacements: [
+                CodexDesktopPatcher.pluginsSidebarReplacement,
+                CodexDesktopPatcher.pluginsPageContentGateReplacement,
+                CodexDesktopPatcher.pluginsPageContentLegacyRepairReplacement,
+                CodexDesktopPatcher.pluginDetailAccessReplacement,
+                CodexDesktopPatcher.pluginInstallAvailabilityReplacement,
+                CodexDesktopPatcher.pluginInstallModalContentReplacement
+            ]
+        )
+        let patcher = CodexDesktopPatcher(
+            appSearchURLs: [fixture.appURL],
+            backupDirectory: fixture.backupURL,
+            manifests: [manifest],
+            codeSigner: NoOpCodexDesktopCodeSigner()
+        )
+
+        try patcher.apply(options: [.plugins])
+
+        #expect(try patcher.status().patchState == .patched(.plugins))
+        #expect(try ElectronAsarArchive(url: fixture.asarURL)
+            .string(at: "webview/assets/skills-page-C8PW4EqX.js")
+            .contains(CodexDesktopPatcher.pluginsPageContentGateReplacement.replacement))
+    }
+
     @Test("Patcher reports damaged install and restores when app.asar is missing")
     func restoreWhenAsarIsMissing() throws {
         let fixture = try CodexDesktopFixture(

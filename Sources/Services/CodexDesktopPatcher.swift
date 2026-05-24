@@ -180,7 +180,7 @@ struct CodexDesktopPatcher {
         guard !pendingOptions.isEmpty else { return }
 
         let manifest = try manifest(for: installation, options: pendingOptions)
-        let replacements = manifest.replacements(for: pendingOptions)
+        let replacements = try replacements(for: pendingOptions, manifest: manifest, installation: installation)
         guard !replacements.isEmpty else { throw CodexDesktopPatchError.noPatchOptionsSelected }
 
         let backupURL = try createBackupIfNeeded(for: installation)
@@ -282,7 +282,7 @@ struct CodexDesktopPatcher {
 
         if let versionMatch = manifests.first(where: { $0.shortVersion == installation.shortVersion }) {
             let archive = ElectronAsarArchive(url: installation.asarURL)
-            let canApply = try versionMatch.replacements.filter { options.contains($0.option) }.allSatisfy { replacement in
+            let canApply = try replacements(for: options, manifest: versionMatch, installation: installation).allSatisfy { replacement in
                 try archive.string(at: replacement.path).contains(replacement.search)
             }
             if canApply {
@@ -291,6 +291,23 @@ struct CodexDesktopPatcher {
         }
 
         throw CodexDesktopPatchError.unsupportedVersion(installation.shortVersion)
+    }
+
+    private func replacements(
+        for options: CodexDesktopPatchOptions,
+        manifest: CodexDesktopPatchManifest,
+        installation: CodexDesktopInstallation
+    ) throws -> [AsarReplacement] {
+        let archive = ElectronAsarArchive(url: installation.asarURL)
+        return manifest.replacements
+            .filter { replacement in
+                guard options.contains(replacement.option) else { return false }
+                guard replacement != Self.pluginsPageContentLegacyRepairReplacement else {
+                    return (try? archive.string(at: replacement.path).contains(replacement.search)) == true
+                }
+                return true
+            }
+            .map { AsarReplacement(path: $0.path, search: $0.search, replacement: $0.replacement) }
     }
 
     @discardableResult

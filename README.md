@@ -93,7 +93,22 @@ Codex also has a shared `Disable Codex Automatic Updates` setting. When enabled,
 
 ## Codex Desktop Patch Capabilities
 
-The Codex page can inspect and patch Codex Desktop installations found at `/Applications/Codex.app` or `~/Applications/Codex.app`. Before applying a patch, Agents Hub backs up `Contents/Resources/app.asar` and `Contents/Info.plist`, applies version-matched same-length replacements, updates the Electron asar hash in `Info.plist`, ad-hoc re-signs the app with Electron JIT entitlements, and supports restoring the backup.
+The Codex page can inspect Codex Desktop installations found at `/Applications/Codex.app` or `~/Applications/Codex.app` and enable selected capabilities in two ways.
+
+Recommended runtime launch:
+
+- Starts the official Codex executable with a local Chrome DevTools Protocol endpoint.
+- Intercepts matching `app://` JavaScript assets for that launched session only.
+- Applies the selected Fast/Plugins replacements in memory.
+- Does not modify `app.asar`, `Info.plist`, the app bundle, or the official OpenAI Developer ID signature.
+
+Legacy bundle patch:
+
+- Backs up `Contents/Resources/app.asar` and `Contents/Info.plist`.
+- Applies version-matched same-length replacements.
+- Updates the Electron asar hash in `Info.plist`.
+- Ad-hoc re-signs the app with Electron JIT entitlements.
+- Can affect Keychain/cookie/history access because the official signature is replaced.
 
 Current patch capabilities:
 
@@ -103,10 +118,18 @@ Current patch capabilities:
 Recommended usage flow:
 
 1. Fully quit Codex Desktop.
-2. Return to Agents Hub and apply the selected Codex Desktop patches.
-3. Reopen Codex Desktop and start using the enabled capabilities.
+2. Return to Agents Hub and click `Runtime Launch`.
+3. Keep the launcher process alive while using Codex so lazy-loaded chunks can still be patched.
+
+If a previous legacy bundle patch changed Codex to an ad-hoc signature, reinstall the official Codex app first. Runtime launch preserves the official signature but cannot recover one that has already been replaced.
 
 Both capabilities have been tested and verified OK with Codex Desktop `26.519.41501`. These patches do not bypass Codex account, workspace, admin, or service-tier requirements.
+
+### Rebuild Local Codex History
+
+For legacy bundle-patched installs, Agents Hub also provides `Rebuild History`. It scans local rollout files in `~/.codex/sessions` and `~/.codex/archived_sessions`, backs up `state_5.sqlite`, `state_5.sqlite-shm`, `state_5.sqlite-wal`, and `session_index.jsonl` into `~/.config/agents-hub/codex-history-backups`, then inserts missing rows into `~/.codex/state_5.sqlite` `threads`.
+
+Use this only while Codex is fully quit. It rebuilds the local history index from files already on disk; it does not restore ChatGPT sign-in, Keychain items, cookies, or remote account history.
 
 ## Check Local Status
 
@@ -128,6 +151,7 @@ Use `Refresh` to re-run API checks and local version detection.
 | `~/.codex/config.toml` | Codex model and provider configuration |
 | `~/.codex/auth.json` | Codex API key auth payload |
 | `~/.config/agents-hub/codex-desktop-backups` | Codex Desktop patch backups |
+| `~/.config/agents-hub/codex-history-backups` | Codex local history rebuild backups |
 
 ## Build Locally
 

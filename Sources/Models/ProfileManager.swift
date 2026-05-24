@@ -14,6 +14,8 @@ final class ProfileManager {
     var disableCodexAutomaticUpdates: Bool
     var codexDesktopPatchOptions: CodexDesktopPatchOptions
     var codexDesktopPatchStatus: CodexDesktopPatchStatus?
+    var codexRuntimeLaunchResult: CodexRuntimeLaunchResult?
+    var codexHistoryRebuildResult: CodexHistoryRebuildResult?
     var agentsMdContent: String
     var agentsMdModifiedAt: Date?
     var lastAgentsMdSyncDirection: AgentsMdSyncDirection?
@@ -46,15 +48,21 @@ final class ProfileManager {
     private let store: ProfileStore
     private let writer: ConfigurationWriter
     private let codexDesktopPatcher: CodexDesktopPatcher
+    private let codexRuntimeLauncher: CodexRuntimeLauncher
+    private let codexHistoryRebuilder: CodexHistoryRebuilder
 
     init(
         store: ProfileStore = ProfileStore(),
         writer: ConfigurationWriter = ConfigurationWriter(),
-        codexDesktopPatcher: CodexDesktopPatcher = CodexDesktopPatcher()
+        codexDesktopPatcher: CodexDesktopPatcher = CodexDesktopPatcher(),
+        codexRuntimeLauncher: CodexRuntimeLauncher = CodexRuntimeLauncher(),
+        codexHistoryRebuilder: CodexHistoryRebuilder = CodexHistoryRebuilder()
     ) {
         self.store = store
         self.writer = writer
         self.codexDesktopPatcher = codexDesktopPatcher
+        self.codexRuntimeLauncher = codexRuntimeLauncher
+        self.codexHistoryRebuilder = codexHistoryRebuilder
         let state = store.load()
         self.profiles = state.profiles
         self.apiProviders = state.apiProviders
@@ -598,11 +606,38 @@ extension ProfileManager {
         }
     }
 
+    func launchCodexWithRuntimePatch() {
+        do {
+            codexRuntimeLaunchResult = try codexRuntimeLauncher.launch(options: codexDesktopPatchOptions)
+            statusMessage = LocalizationManager.localize("status.codex_runtime_patch_launched")
+            errorMessage = nil
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
     func restoreCodexDesktopPatch() {
         do {
             try codexDesktopPatcher.restore()
             codexDesktopPatchStatus = try codexDesktopPatcher.status()
             statusMessage = LocalizationManager.localize("status.codex_desktop_patch_restored")
+            errorMessage = nil
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func rebuildCodexLocalHistory() {
+        do {
+            let result = try codexHistoryRebuilder.rebuild()
+            codexHistoryRebuildResult = result
+            statusMessage = String(
+                format: LocalizationManager.localize("status.codex_history_rebuilt"),
+                Int64(result.restoredCount + result.existingCount),
+                Int64(result.scannedCount),
+                Int64(result.restoredCount),
+                Int64(result.existingCount)
+            )
             errorMessage = nil
         } catch {
             errorMessage = error.localizedDescription
