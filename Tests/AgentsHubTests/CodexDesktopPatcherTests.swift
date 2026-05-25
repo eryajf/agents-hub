@@ -41,9 +41,7 @@ struct CodexDesktopPatcherTests {
             ]
         )
         let patcher = CodexDesktopPatcher(
-            appSearchURLs: [fixture.appURL],
-            backupDirectory: fixture.backupURL,
-            codeSigner: NoOpCodexDesktopCodeSigner()
+            appSearchURLs: [fixture.appURL]
         )
 
         let status = try patcher.status()
@@ -56,214 +54,24 @@ struct CodexDesktopPatcherTests {
         #expect(status.patchState == .unpatched)
     }
 
-    @Test("Patcher refuses unsupported manifests without modifying app files")
-    func refusesUnsupportedManifestWithoutModifyingAppFiles() throws {
-        let fixture = try CodexDesktopFixture(
-            shortVersion: "1.0.0",
-            files: [
-                "webview/assets/feature.js": "no supported patterns here"
-            ]
-        )
-        let originalAsar = try Data(contentsOf: fixture.asarURL)
-        let patcher = CodexDesktopPatcher(
-            appSearchURLs: [fixture.appURL],
-            backupDirectory: fixture.backupURL,
-            manifests: [],
-            codeSigner: NoOpCodexDesktopCodeSigner()
-        )
-
-        #expect(throws: CodexDesktopPatchError.self) {
-            try patcher.apply(options: CodexDesktopPatchOptions(enableFastMode: true, enablePlugins: true))
-        }
-        #expect(try Data(contentsOf: fixture.asarURL) == originalAsar)
-    }
-
-    @Test("Patcher backs up, applies selected options, and restores originals")
-    func applyAndRestore() throws {
-        let fastOriginal = "d?.authMethod!==`chatgpt`||g"
-        let fastPatched = "false                    ||g"
-        #expect(fastOriginal.utf8.count == fastPatched.utf8.count)
-
-        let pluginOriginal = "s&&!m)"
-        let pluginPatched = "s&&!1)"
-        #expect(pluginOriginal.utf8.count == pluginPatched.utf8.count)
-
+    @Test("Patcher detects already patched plugin markers")
+    func detectsAlreadyPatchedPluginMarkers() throws {
         let fixture = try CodexDesktopFixture(
             shortVersion: "26.519.41501",
             files: [
-                "webview/assets/use-is-fast-mode-enabled-CwUgvZ2O.js": "if(\(fastOriginal)){return disabled}",
-                "webview/assets/skills-page-C8PW4EqX.js": "if(\(pluginOriginal)){return blocked}"
-            ]
-        )
-        let originalAsar = try Data(contentsOf: fixture.asarURL)
-        let originalPlist = try Data(contentsOf: fixture.infoPlistURL)
-        let originalHash = sha256Hex(originalAsar)
-        let manifest = CodexDesktopPatchManifest(
-            shortVersion: "26.519.41501",
-            originalAsarSHA256: originalHash,
-            replacements: [
-                .init(
-                    option: .fastMode,
-                    path: "webview/assets/use-is-fast-mode-enabled-CwUgvZ2O.js",
-                    search: fastOriginal,
-                    replacement: fastPatched
-                ),
-                .init(
-                    option: .plugins,
-                    path: "webview/assets/skills-page-C8PW4EqX.js",
-                    search: pluginOriginal,
-                    replacement: pluginPatched
-                )
+                "webview/assets/app-main-DG-Mf4Wj.js": CodexDesktopPatcher.pluginsSidebarReplacement.replacement,
+                "webview/assets/skills-page-C8PW4EqX.js": CodexDesktopPatcher.pluginsPageContentGateReplacement.replacement,
+                "webview/assets/plugin-detail-page-jAJa26RM.js": CodexDesktopPatcher.pluginDetailAccessReplacement.replacement,
+                "webview/assets/check-plugin-availability-6p9UsIaB.js": CodexDesktopPatcher.pluginInstallAvailabilityReplacement.replacement,
+                "webview/assets/use-plugin-install-flow-IT_xMrDV.js": CodexDesktopPatcher.pluginInstallModalContentReplacement.replacement
             ]
         )
         let patcher = CodexDesktopPatcher(
-            appSearchURLs: [fixture.appURL],
-            backupDirectory: fixture.backupURL,
-            manifests: [manifest],
-            codeSigner: NoOpCodexDesktopCodeSigner()
+            appSearchURLs: [fixture.appURL]
         )
-
-        try patcher.apply(options: CodexDesktopPatchOptions(enableFastMode: true, enablePlugins: true))
-
-        let patchedAsar = try Data(contentsOf: fixture.asarURL)
-        #expect(patchedAsar != originalAsar)
-        #expect(try ElectronAsarArchive(url: fixture.asarURL)
-            .string(at: "webview/assets/use-is-fast-mode-enabled-CwUgvZ2O.js")
-            .contains(fastPatched))
-        #expect(try plistAsarHash(fixture.infoPlistURL) == ElectronAsarArchive(url: fixture.asarURL).headerSHA256Hex())
-        #expect(try patcher.status().patchState == .patched([.fastMode, .plugins]))
-
-        try patcher.restore()
-
-        #expect(try Data(contentsOf: fixture.asarURL) == originalAsar)
-        #expect(try Data(contentsOf: fixture.infoPlistURL) == originalPlist)
-        #expect(try patcher.status().patchState == .unpatched)
-    }
-
-    @Test("Patcher can apply another option after one option is already patched")
-    func applyAdditionalOptionAfterPartialPatch() throws {
-        let fastOriginal = "d?.authMethod!==`chatgpt`||g"
-        let fastPatched = "false                    ||g"
-        let pluginOriginal = "s&&!m)"
-        let pluginPatched = "s&&!1)"
-        let fixture = try CodexDesktopFixture(
-            shortVersion: "26.519.41501",
-            files: [
-                "webview/assets/use-is-fast-mode-enabled-CwUgvZ2O.js": "if(\(fastOriginal)){return disabled}",
-                "webview/assets/skills-page-C8PW4EqX.js": "if(\(pluginOriginal)){return blocked}"
-            ]
-        )
-        let originalHash = sha256Hex(Data(contentsOf: fixture.asarURL))
-        let manifest = CodexDesktopPatchManifest(
-            shortVersion: "26.519.41501",
-            originalAsarSHA256: originalHash,
-            replacements: [
-                .init(
-                    option: .fastMode,
-                    path: "webview/assets/use-is-fast-mode-enabled-CwUgvZ2O.js",
-                    search: fastOriginal,
-                    replacement: fastPatched
-                ),
-                .init(
-                    option: .plugins,
-                    path: "webview/assets/skills-page-C8PW4EqX.js",
-                    search: pluginOriginal,
-                    replacement: pluginPatched
-                )
-            ]
-        )
-        let patcher = CodexDesktopPatcher(
-            appSearchURLs: [fixture.appURL],
-            backupDirectory: fixture.backupURL,
-            manifests: [manifest],
-            codeSigner: NoOpCodexDesktopCodeSigner()
-        )
-
-        try patcher.apply(options: [.fastMode])
-        #expect(try patcher.status().patchState == .patched(.fastMode))
-
-        try patcher.apply(options: [.fastMode, .plugins])
-
-        #expect(try patcher.status().patchState == .patched([.fastMode, .plugins]))
-        #expect(try ElectronAsarArchive(url: fixture.asarURL)
-            .string(at: "webview/assets/skills-page-C8PW4EqX.js")
-            .contains(pluginPatched))
-    }
-
-    @Test("Patcher skips plugin legacy repair when the broken legacy marker is absent")
-    func skipsPluginLegacyRepairWhenAbsent() throws {
-        let fixture = try CodexDesktopFixture(
-            shortVersion: "26.519.41501",
-            files: [
-                "webview/assets/app-main-DG-Mf4Wj.js": "if({authMethod:c}=Ba(),l=Li(`533078438`),u=Cc(c),d=e&&l&&u,f=bs({hostId:Tt}),p=e&&f&&!u,){return disabled}",
-                "webview/assets/skills-page-C8PW4EqX.js": "function page(){let m=f,g,v;return m}",
-                "webview/assets/plugin-detail-page-jAJa26RM.js": "function detail(){const {authMethod:i}=oe();if(Be(i)){return null}}",
-                "webview/assets/check-plugin-availability-6p9UsIaB.js": "function check(){let F=w.length>0&&N===w.length?M?`disabled-by-admin`:`connector-unavailable`:null,I;return F}",
-                "webview/assets/use-plugin-install-flow-IT_xMrDV.js": "function install(){let g=m,_=(u?.apps.length??0)>0&&u?.summary.authPolicy===`ON_INSTALL`,v;return _}"
-            ]
-        )
-        let originalHash = sha256Hex(Data(contentsOf: fixture.asarURL))
-        let manifest = CodexDesktopPatchManifest(
-            shortVersion: "26.519.41501",
-            originalAsarSHA256: originalHash,
-            replacements: [
-                CodexDesktopPatcher.pluginsSidebarReplacement,
-                CodexDesktopPatcher.pluginsPageContentGateReplacement,
-                CodexDesktopPatcher.pluginsPageContentLegacyRepairReplacement,
-                CodexDesktopPatcher.pluginDetailAccessReplacement,
-                CodexDesktopPatcher.pluginInstallAvailabilityReplacement,
-                CodexDesktopPatcher.pluginInstallModalContentReplacement
-            ]
-        )
-        let patcher = CodexDesktopPatcher(
-            appSearchURLs: [fixture.appURL],
-            backupDirectory: fixture.backupURL,
-            manifests: [manifest],
-            codeSigner: NoOpCodexDesktopCodeSigner()
-        )
-
-        try patcher.apply(options: [.plugins])
 
         #expect(try patcher.status().patchState == .patched(.plugins))
-        #expect(try ElectronAsarArchive(url: fixture.asarURL)
-            .string(at: "webview/assets/skills-page-C8PW4EqX.js")
-            .contains(CodexDesktopPatcher.pluginsPageContentGateReplacement.replacement))
     }
-
-    @Test("Patcher reports damaged install and restores when app.asar is missing")
-    func restoreWhenAsarIsMissing() throws {
-        let fixture = try CodexDesktopFixture(
-            shortVersion: "26.519.41501",
-            files: [
-                "webview/assets/use-is-fast-mode-enabled-CwUgvZ2O.js": "d?.authMethod!==`chatgpt`||g",
-                "webview/assets/skills-page-C8PW4EqX.js": "s&&!m)"
-            ]
-        )
-        let originalAsar = try Data(contentsOf: fixture.asarURL)
-        let originalPlist = try Data(contentsOf: fixture.infoPlistURL)
-        let patcher = CodexDesktopPatcher(
-            appSearchURLs: [fixture.appURL],
-            backupDirectory: fixture.backupURL,
-            codeSigner: NoOpCodexDesktopCodeSigner()
-        )
-
-        try patcher.apply(options: [.fastMode])
-        try FileManager.default.removeItem(at: fixture.asarURL)
-
-        let damagedStatus = try patcher.status()
-        #expect(damagedStatus.patchState == .damaged("Codex Desktop app.asar is missing."))
-        #expect(damagedStatus.backupURL != nil)
-
-        try patcher.restore()
-
-        #expect(try Data(contentsOf: fixture.asarURL) == originalAsar)
-        #expect(try Data(contentsOf: fixture.infoPlistURL) == originalPlist)
-        #expect(try patcher.status().patchState == .unpatched)
-    }
-}
-
-private struct NoOpCodexDesktopCodeSigner: CodexDesktopCodeSigner {
-    func sign(appURL: URL) throws {}
 }
 
 private struct CodexDesktopFixture {
@@ -271,7 +79,6 @@ private struct CodexDesktopFixture {
     let appURL: URL
     let asarURL: URL
     let infoPlistURL: URL
-    let backupURL: URL
 
     init(shortVersion: String = "26.519.41501", files: [String: String]) throws {
         rootURL = FileManager.default.temporaryDirectory
@@ -281,7 +88,6 @@ private struct CodexDesktopFixture {
         let resourcesURL = contentsURL.appendingPathComponent("Resources", isDirectory: true)
         asarURL = resourcesURL.appendingPathComponent("app.asar")
         infoPlistURL = contentsURL.appendingPathComponent("Info.plist")
-        backupURL = rootURL.appendingPathComponent("Backups", isDirectory: true)
 
         try FileManager.default.createDirectory(at: resourcesURL, withIntermediateDirectories: true)
         try makeAsar(files: files).write(to: asarURL)

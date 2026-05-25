@@ -154,41 +154,13 @@ struct AgentProfilesView: View {
                     detailLineLimit: 2
                 )
             } trailing: {
-                HStack(spacing: 8) {
-                    Button {
-                        manager.refreshCodexDesktopPatchStatus()
-                    } label: {
-                        Image(systemName: "arrow.clockwise")
-                    }
-                    .buttonStyle(.borderless)
-                    .help(L.string("ui.action.refresh", using: lm))
-
-                    Button {
-                        manager.restoreCodexDesktopPatch()
-                    } label: {
-                        Label(L.string("ui.codex_desktop_patch.restore", using: lm), systemImage: "arrow.uturn.backward")
-                    }
-                    .disabled(!codexDesktopCanRestore)
-
-                    Button {
-                        manager.rebuildCodexLocalHistory()
-                    } label: {
-                        Label(L.string("ui.codex_desktop_patch.rebuild_history", using: lm), systemImage: "clock.arrow.circlepath")
-                    }
-
-                    Button {
-                        manager.launchCodexWithRuntimePatch()
-                    } label: {
-                        Label(L.string("ui.codex_desktop_patch.runtime_launch", using: lm), systemImage: "play.fill")
-                    }
-                    .disabled(!codexDesktopCanRuntimeLaunch)
-
-                    Button {
-                        manager.applyCodexDesktopPatch()
-                    } label: {
-                        Label(L.string("ui.codex_desktop_patch.apply_legacy", using: lm), systemImage: "wand.and.stars")
-                    }
-                    .disabled(!codexDesktopCanApply)
+                codexPatchAction(
+                    title: L.string("ui.codex_desktop_patch.runtime_launch", using: lm),
+                    systemImage: "play.fill",
+                    help: L.string("ui.codex_desktop_patch.runtime_launch_help", using: lm),
+                    disabled: !codexDesktopCanRuntimeLaunch
+                ) {
+                    manager.launchCodexWithRuntimePatch()
                 }
             }
         }
@@ -197,6 +169,24 @@ struct AgentProfilesView: View {
             if manager.codexDesktopPatchStatus == nil {
                 manager.refreshCodexDesktopPatchStatus()
             }
+        }
+    }
+
+    private func codexPatchAction(
+        title: String,
+        systemImage: String,
+        help: String,
+        disabled: Bool = false,
+        action: @escaping () -> Void
+    ) -> some View {
+        HStack(spacing: 3) {
+            Button(action: action) {
+                Label(title, systemImage: systemImage)
+            }
+            .disabled(disabled)
+            .help(help)
+
+            CodexPatchHelpButton(help: help)
         }
     }
 
@@ -374,19 +364,6 @@ struct AgentProfilesView: View {
         manager.codexDesktopPatchStatus?.availableCapabilities.contains(option) == true
     }
 
-    private var codexDesktopCanApply: Bool {
-        guard !manager.codexDesktopPatchOptions.isEmpty,
-              let status = manager.codexDesktopPatchStatus
-        else { return false }
-
-        switch status.patchState {
-        case .unpatched, .patched:
-            return true
-        case .damaged, .notInstalled, .unsupported:
-            return false
-        }
-    }
-
     private var codexDesktopCanRuntimeLaunch: Bool {
         guard !manager.codexDesktopPatchOptions.isEmpty,
               let status = manager.codexDesktopPatchStatus
@@ -398,10 +375,6 @@ struct AgentProfilesView: View {
         case .damaged, .notInstalled, .unsupported:
             return false
         }
-    }
-
-    private var codexDesktopCanRestore: Bool {
-        manager.codexDesktopPatchStatus?.backupURL != nil
     }
 
     private var codexDesktopStatusDetail: String {
@@ -462,5 +435,34 @@ struct AgentProfilesView: View {
     private func reveal(_ url: URL) {
         let directory = url.deletingLastPathComponent()
         NSWorkspace.shared.selectFile(url.path(), inFileViewerRootedAtPath: directory.path())
+    }
+}
+
+private struct CodexPatchHelpButton: View {
+    let help: String
+    @State private var isPresented = false
+
+    var body: some View {
+        Button {} label: {
+            Image(systemName: "info.circle")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .buttonStyle(.borderless)
+        .controlSize(.small)
+        .help(help)
+        .accessibilityLabel(help)
+        .onHover { hovering in
+            isPresented = hovering
+        }
+        .popover(isPresented: $isPresented, arrowEdge: .bottom) {
+            Text(help)
+                .font(.caption)
+                .foregroundStyle(.primary)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(10)
+                .frame(width: 240, alignment: .leading)
+        }
     }
 }

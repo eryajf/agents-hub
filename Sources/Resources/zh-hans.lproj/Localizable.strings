@@ -123,12 +123,9 @@
 "ui.codex_desktop_patch.plugins" = "插件功能";
 "ui.codex_desktop_patch.plugins_detail" = "启用本地插件与技能入口；不会绕过账号、工作区或管理员权限要求。";
 "ui.codex_desktop_patch.actions" = "补丁控制";
-"ui.codex_desktop_patch.actions_detail" = "推荐使用运行时启动：不修改 app.asar、不重签名，可保留官方签名和原有历史访问能力。旧式应用会改写 bundle 并重签名。";
-"ui.codex_desktop_patch.apply" = "应用";
-"ui.codex_desktop_patch.apply_legacy" = "旧式应用";
+"ui.codex_desktop_patch.actions_detail" = "通过运行时拦截启用所选功能，不修改 app.asar、不重签名，可保留官方签名和原有历史访问能力。";
 "ui.codex_desktop_patch.runtime_launch" = "运行时启动";
-"ui.codex_desktop_patch.rebuild_history" = "重建历史";
-"ui.codex_desktop_patch.restore" = "恢复";
+"ui.codex_desktop_patch.runtime_launch_help" = "推荐方式。通过运行时拦截临时启用已选功能，不修改 Codex app.asar，也不会重签名应用。";
 "ui.codex_desktop_patch.state_unpatched" = "可应用";
 "ui.codex_desktop_patch.state_patched" = "已补丁";
 "ui.codex_desktop_patch.state_patched_all" = "Fast + 插件";
@@ -160,10 +157,7 @@
 "status.api_provider_saved" = "%@ 供应商已保存。";
 "status.claude_onboarding_updated" = "Claude 初始引导状态已更新。";
 "status.codex_automatic_updates_updated" = "Codex 自动更新设置已更新。";
-"status.codex_desktop_patch_applied" = "Codex 桌面端补丁已应用。";
-"status.codex_desktop_patch_restored" = "Codex 桌面端已从备份恢复。";
 "status.codex_runtime_patch_launched" = "Codex 已通过运行时补丁启动。请保持启动进程运行，直到退出 Codex。";
-"status.codex_history_rebuilt" = "Codex 本地历史索引已重建，已索引 %lld / %lld 个会话（新增补回 %lld 个，原已存在 %lld 个）。";
 "status.state_reset" = "Agents Hub 数据已重置。";
 
 /* Defaults */

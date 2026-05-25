@@ -123,12 +123,9 @@
 "ui.codex_desktop_patch.plugins" = "Plugins";
 "ui.codex_desktop_patch.plugins_detail" = "Enables local plugin and skills entry points. It does not bypass account, workspace, or admin requirements.";
 "ui.codex_desktop_patch.actions" = "Patch Controls";
-"ui.codex_desktop_patch.actions_detail" = "Runtime launch is recommended: it does not modify app.asar or re-sign the app, preserving the official signature and history access. Legacy apply rewrites the bundle and re-signs it.";
-"ui.codex_desktop_patch.apply" = "Apply";
-"ui.codex_desktop_patch.apply_legacy" = "Legacy Apply";
+"ui.codex_desktop_patch.actions_detail" = "Enables the selected features through runtime interception without modifying app.asar or re-signing Codex, preserving the official signature and history access.";
 "ui.codex_desktop_patch.runtime_launch" = "Runtime Launch";
-"ui.codex_desktop_patch.rebuild_history" = "Rebuild History";
-"ui.codex_desktop_patch.restore" = "Restore";
+"ui.codex_desktop_patch.runtime_launch_help" = "Recommended. Temporarily enables the selected features through runtime interception without modifying app.asar or re-signing Codex.";
 "ui.codex_desktop_patch.state_unpatched" = "Ready";
 "ui.codex_desktop_patch.state_patched" = "Patched";
 "ui.codex_desktop_patch.state_patched_all" = "Fast + Plugins";
@@ -160,10 +157,7 @@
 "status.api_provider_saved" = "%@ provider saved.";
 "status.claude_onboarding_updated" = "Claude onboarding state updated.";
 "status.codex_automatic_updates_updated" = "Codex automatic update setting updated.";
-"status.codex_desktop_patch_applied" = "Codex Desktop patch applied.";
-"status.codex_desktop_patch_restored" = "Codex Desktop restored from backup.";
 "status.codex_runtime_patch_launched" = "Codex launched with runtime patches. Keep the launcher process running until you quit Codex.";
-"status.codex_history_rebuilt" = "Codex local history index rebuilt, indexed %lld / %lld sessions (%lld newly restored, %lld already existed).";
 "status.state_reset" = "Agents Hub data has been reset.";
 
 /* Defaults */

@@ -6,7 +6,7 @@ English | [简体中文](README.zh-CN.md)
 
 <p>
   <img alt="Platform" src="https://img.shields.io/badge/macOS-15%2B-111111?style=flat&logo=apple" />
-  <img alt="Swift" src="https://img.shields.io/badge/Swift-6.3-F05138?style=flat&logo=swift" />
+  <img alt="Swift" src="https://img.shields.io/badge/Swift-6.2-F05138?style=flat&logo=swift" />
   <img alt="Build" src="https://img.shields.io/badge/Build-SwiftPM-0A84FF?style=flat" />
   <img alt="i18n" src="https://img.shields.io/badge/i18n-zh--Hans%20%7C%20en-34C759?style=flat" />
   <img alt="Version" src="https://img.shields.io/github/v/release/QuentinHsu/agents-hub?style=flat&logo=github" />
@@ -91,24 +91,14 @@ Agents Hub writes Codex profiles with `wire_api = "responses"` and `requires_ope
 
 Codex also has a shared `Disable Codex Automatic Updates` setting. When enabled, Agents Hub writes Codex Desktop Sparkle defaults and sets `SUEnableAutomaticChecks` and `SUAutomaticallyUpdate` to `false`.
 
-## Codex Desktop Patch Capabilities
+## Codex Desktop Runtime Patches
 
-The Codex page can inspect Codex Desktop installations found at `/Applications/Codex.app` or `~/Applications/Codex.app` and enable selected capabilities in two ways.
-
-Recommended runtime launch:
+The Codex page can inspect Codex Desktop installations found at `/Applications/Codex.app` or `~/Applications/Codex.app` and enable selected capabilities through `Runtime Launch`:
 
 - Starts the official Codex executable with a local Chrome DevTools Protocol endpoint.
 - Intercepts matching `app://` JavaScript assets for that launched session only.
 - Applies the selected Fast/Plugins replacements in memory.
 - Does not modify `app.asar`, `Info.plist`, the app bundle, or the official OpenAI Developer ID signature.
-
-Legacy bundle patch:
-
-- Backs up `Contents/Resources/app.asar` and `Contents/Info.plist`.
-- Applies version-matched same-length replacements.
-- Updates the Electron asar hash in `Info.plist`.
-- Ad-hoc re-signs the app with Electron JIT entitlements.
-- Can affect Keychain/cookie/history access because the official signature is replaced.
 
 Current patch capabilities:
 
@@ -121,15 +111,7 @@ Recommended usage flow:
 2. Return to Agents Hub and click `Runtime Launch`.
 3. Keep the launcher process alive while using Codex so lazy-loaded chunks can still be patched.
 
-If a previous legacy bundle patch changed Codex to an ad-hoc signature, reinstall the official Codex app first. Runtime launch preserves the official signature but cannot recover one that has already been replaced.
-
-Both capabilities have been tested and verified OK with Codex Desktop `26.519.41501`. These patches do not bypass Codex account, workspace, admin, or service-tier requirements.
-
-### Rebuild Local Codex History
-
-For legacy bundle-patched installs, Agents Hub also provides `Rebuild History`. It scans local rollout files in `~/.codex/sessions` and `~/.codex/archived_sessions`, backs up `state_5.sqlite`, `state_5.sqlite-shm`, `state_5.sqlite-wal`, and `session_index.jsonl` into `~/.config/agents-hub/codex-history-backups`, then inserts missing rows into `~/.codex/state_5.sqlite` `threads`.
-
-Use this only while Codex is fully quit. It rebuilds the local history index from files already on disk; it does not restore ChatGPT sign-in, Keychain items, cookies, or remote account history.
+The current runtime patch flow has been tested and verified OK with Codex Desktop `26.519.41501`. These patches do not bypass Codex account, workspace, admin, or service-tier requirements.
 
 ## Check Local Status
 
@@ -150,8 +132,6 @@ Use `Refresh` to re-run API checks and local version detection.
 | `~/.claude.json` | Claude Code onboarding state when the shared setting is enabled |
 | `~/.codex/config.toml` | Codex model and provider configuration |
 | `~/.codex/auth.json` | Codex API key auth payload |
-| `~/.config/agents-hub/codex-desktop-backups` | Codex Desktop patch backups |
-| `~/.config/agents-hub/codex-history-backups` | Codex local history rebuild backups |
 
 ## Build Locally
 

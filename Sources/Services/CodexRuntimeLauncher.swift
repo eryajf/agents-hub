@@ -37,13 +37,16 @@ struct CodexRuntimeLaunchResult: Equatable, Sendable {
 struct CodexRuntimeLauncher {
     var patcher: CodexDesktopPatcher
     var fileManager: FileManager
+    var resourceBundle: Bundle
 
     init(
         patcher: CodexDesktopPatcher = CodexDesktopPatcher(),
-        fileManager: FileManager = .default
+        fileManager: FileManager = .default,
+        resourceBundle: Bundle = AppResourceBundle.bundle
     ) {
         self.patcher = patcher
         self.fileManager = fileManager
+        self.resourceBundle = resourceBundle
     }
 
     func launch(options: CodexDesktopPatchOptions) throws -> CodexRuntimeLaunchResult {
@@ -57,15 +60,11 @@ struct CodexRuntimeLauncher {
 
         let nodeURL = installation.appURL
             .appendingPathComponent("Contents/Resources/node", isDirectory: false)
-        guard fileManager.fileExists(atPath: nodeURL.path()) else {
-            throw CodexRuntimeLaunchError.nodeMissing(nodeURL.path())
+        guard fileManager.fileExists(atPath: Self.fileSystemPath(for: nodeURL)) else {
+            throw CodexRuntimeLaunchError.nodeMissing(Self.fileSystemPath(for: nodeURL))
         }
 
-        guard let launcherURL = Bundle.module.url(
-            forResource: "runtime-launcher",
-            withExtension: "mjs",
-            subdirectory: "CodexRuntimePatch"
-        ) ?? Bundle.module.url(forResource: "runtime-launcher", withExtension: "mjs") else {
+        guard let launcherURL = Self.launcherResourceURL(in: resourceBundle) else {
             throw CodexRuntimeLaunchError.launcherResourceMissing
         }
 
@@ -73,9 +72,9 @@ struct CodexRuntimeLauncher {
         let process = Process()
         process.executableURL = nodeURL
         process.arguments = [
-            launcherURL.path(),
+            Self.fileSystemPath(for: launcherURL),
             "--app",
-            installation.appURL.path(),
+            Self.fileSystemPath(for: installation.appURL),
             "--port",
             String(port),
             "--features",
@@ -107,6 +106,18 @@ struct CodexRuntimeLauncher {
         if options.contains(.fastMode) { features.append("fast") }
         if options.contains(.plugins) { features.append("plugins") }
         return features.joined(separator: ",")
+    }
+
+    static func launcherResourceURL(in bundle: Bundle) -> URL? {
+        bundle.url(
+            forResource: "runtime-launcher",
+            withExtension: "mjs",
+            subdirectory: "CodexRuntimePatch"
+        ) ?? bundle.url(forResource: "runtime-launcher", withExtension: "mjs")
+    }
+
+    static func fileSystemPath(for url: URL) -> String {
+        url.path(percentEncoded: false)
     }
 
     private func waitForLauncherReady(process: Process, logURL: URL) throws {

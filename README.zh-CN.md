@@ -6,7 +6,7 @@
 
 <p>
   <img alt="Platform" src="https://img.shields.io/badge/macOS-15%2B-111111?style=flat&logo=apple" />
-  <img alt="Swift" src="https://img.shields.io/badge/Swift-6.3-F05138?style=flat&logo=swift" />
+  <img alt="Swift" src="https://img.shields.io/badge/Swift-6.2-F05138?style=flat&logo=swift" />
   <img alt="Build" src="https://img.shields.io/badge/Build-SwiftPM-0A84FF?style=flat" />
   <img alt="i18n" src="https://img.shields.io/badge/i18n-zh--Hans%20%7C%20en-34C759?style=flat" />
   <img alt="Version" src="https://img.shields.io/github/v/release/QuentinHsu/agents-hub?style=flat&logo=github" />
@@ -91,24 +91,14 @@ Agents Hub 会以 `wire_api = "responses"` 和 `requires_openai_auth = true` 写
 
 Codex 还有一个共享的 `禁用 Codex 自动更新` 设置。启用后，Agents Hub 会写入 Codex Desktop 的 Sparkle defaults，并将 `SUEnableAutomaticChecks` 与 `SUAutomaticallyUpdate` 设置为 `false`。
 
-## Codex 桌面端补丁能力
+## Codex 桌面端运行时补丁
 
-Codex 页面可以检测安装在 `/Applications/Codex.app` 或 `~/Applications/Codex.app` 的 Codex Desktop，并通过两种方式启用选中的能力。
-
-推荐的运行时启动：
+Codex 页面可以检测安装在 `/Applications/Codex.app` 或 `~/Applications/Codex.app` 的 Codex Desktop，并通过 `运行时启动` 启用选中的能力：
 
 - 使用本机 Chrome DevTools Protocol endpoint 启动官方 Codex 可执行文件。
 - 仅在本次启动会话中拦截匹配的 `app://` JavaScript 资源。
 - 在内存中应用选中的 Fast/Plugins 替换。
 - 不修改 `app.asar`、`Info.plist`、app bundle，也不会替换官方 OpenAI Developer ID 签名。
-
-旧式 bundle patch：
-
-- 备份 `Contents/Resources/app.asar` 和 `Contents/Info.plist`。
-- 应用版本匹配且长度不变的替换。
-- 更新 `Info.plist` 中的 Electron asar hash。
-- 使用 Electron JIT entitlements 对应用进行 ad-hoc 重签。
-- 由于官方签名会被替换，可能影响 Keychain、cookie 或历史访问。
 
 当前补丁能力：
 
@@ -121,15 +111,7 @@ Codex 页面可以检测安装在 `/Applications/Codex.app` 或 `~/Applications/
 2. 回到 Agents Hub，点击 `运行时启动`。
 3. 使用 Codex 期间保持启动进程运行，以便继续 patch lazy-loaded chunks。
 
-如果之前使用旧式 bundle patch 将 Codex 改成了 ad-hoc 签名，请先重新安装官方 Codex app。运行时启动会保留官方签名，但无法修复已经被替换过的签名。
-
-这两项能力已在 Codex Desktop `26.519.41501` 版本中测试验证 OK。这些补丁不会绕过 Codex 账号、工作区、管理员权限或服务 tier 要求。
-
-### 重建本地 Codex 历史
-
-对于旧式 bundle patch 后的安装，Agents Hub 也提供 `重建历史`。它会扫描 `~/.codex/sessions` 和 `~/.codex/archived_sessions` 中的本地 rollout 文件，将 `state_5.sqlite`、`state_5.sqlite-shm`、`state_5.sqlite-wal` 和 `session_index.jsonl` 备份到 `~/.config/agents-hub/codex-history-backups`，再把缺失记录插入到 `~/.codex/state_5.sqlite` 的 `threads` 表。
-
-只在 Codex 完全退出时使用这个功能。它会从本机已有文件重建本地历史索引；不会恢复 ChatGPT 登录、Keychain 项、cookie 或远端账号历史。
+当前已在 Codex Desktop `26.519.41501` 版本中测试验证 OK。这些补丁不会绕过 Codex 账号、工作区、管理员权限或服务 tier 要求。
 
 ## 检查本地状态
 
@@ -150,8 +132,6 @@ Codex 页面可以检测安装在 `/Applications/Codex.app` 或 `~/Applications/
 | `~/.claude.json` | 启用共享设置时写入的 Claude Code onboarding 状态 |
 | `~/.codex/config.toml` | Codex 模型与供应商配置 |
 | `~/.codex/auth.json` | Codex API Key 认证内容 |
-| `~/.config/agents-hub/codex-desktop-backups` | Codex Desktop 补丁备份 |
-| `~/.config/agents-hub/codex-history-backups` | Codex 本地历史重建备份 |
 
 ## 本地构建
 
