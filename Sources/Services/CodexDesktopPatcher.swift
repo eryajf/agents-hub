@@ -5,6 +5,7 @@ struct CodexDesktopPatchOptions: OptionSet, Codable, Sendable, Hashable {
 
     static let fastMode = CodexDesktopPatchOptions(rawValue: 1 << 0)
     static let plugins = CodexDesktopPatchOptions(rawValue: 1 << 1)
+    static let appshot = CodexDesktopPatchOptions(rawValue: 1 << 2)
 
     init(rawValue: Int) {
         self.rawValue = rawValue
@@ -182,6 +183,14 @@ struct CodexDesktopPatcher {
             options.insert(.plugins)
         }
 
+        let appshotReplacement = Self.appshotAvailabilityReplacement
+        let appshotServiceReplacement = Self.appshotServiceEnablementReplacement
+        if (try? archive.string(at: appshotReplacement.path).contains(appshotReplacement.replacement)) == true ||
+            (try? archive.string(at: appshotServiceReplacement.path).contains(appshotServiceReplacement.replacement)) == true
+        {
+            options.insert(.appshot)
+        }
+
         return options
     }
 
@@ -199,6 +208,12 @@ struct CodexDesktopPatcher {
             (try? archive.contains(path: "webview/assets/skills-page-C8PW4EqX.js")) == true
         {
             capabilities.insert(.plugins)
+        }
+
+        if (try? archive.contains(path: "webview/assets/use-is-appshot-available-D0PV8qeY.js")) == true ||
+            (try? archive.contains(path: "webview/assets/app-main-DG-Mf4Wj.js")) == true
+        {
+            capabilities.insert(.appshot)
         }
 
         return capabilities
@@ -267,6 +282,20 @@ struct CodexDesktopPatcher {
         replacement: "let g=m,_=(u?.apps.length??0)>0&&!1                                  ,v;"
     )
 
+    static let appshotAvailabilityReplacement = CodexDesktopPatchReplacement(
+        option: .appshot,
+        path: "webview/assets/use-is-appshot-available-D0PV8qeY.js",
+        search: "return n===`macOS`&&r",
+        replacement: "return n===`macOS`   "
+    )
+
+    static let appshotServiceEnablementReplacement = CodexDesktopPatchReplacement(
+        option: .appshot,
+        path: "webview/assets/app-main-DG-Mf4Wj.js",
+        search: "appshotsEnabled:r,artifactsPane:!0",
+        replacement: "appshotsEnabled:!0,artifactsPane:1"
+    )
+
     static let pluginsReplacement = pluginsPageContentGateReplacement
 
     static let pluginsPatchedMarkers = [
@@ -293,7 +322,9 @@ struct CodexDesktopPatcher {
                 pluginsPageContentLegacyRepairReplacement,
                 pluginDetailAccessReplacement,
                 pluginInstallAvailabilityReplacement,
-                pluginInstallModalContentReplacement
+                pluginInstallModalContentReplacement,
+                appshotAvailabilityReplacement,
+                appshotServiceEnablementReplacement
             ]
         )
     ]

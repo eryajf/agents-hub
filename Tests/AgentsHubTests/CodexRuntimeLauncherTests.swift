@@ -18,4 +18,11 @@ struct CodexRuntimeLauncherTests {
 
         #expect(CodexRuntimeLauncher.fileSystemPath(for: url) == "/tmp/Agents Hub.app/Contents/Resources/runtime-launcher.mjs")
     }
+
+    @Test("Runtime launcher includes selected feature arguments")
+    func featureArgumentIncludesSelectedFeatures() {
+        let options: CodexDesktopPatchOptions = [.fastMode, .plugins, .appshot]
+
+        #expect(CodexRuntimeLauncher.featureArgument(options) == "fast,plugins,appshot")
+    }
 }

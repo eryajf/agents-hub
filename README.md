@@ -97,13 +97,14 @@ The Codex page can inspect Codex Desktop installations found at `/Applications/C
 
 - Starts the official Codex executable with a local Chrome DevTools Protocol endpoint.
 - Intercepts matching `app://` JavaScript assets for that launched session only.
-- Applies the selected Fast/Plugins replacements in memory.
+- Applies the selected Fast/Plugins/Appshot replacements in memory.
 - Does not modify `app.asar`, `Info.plist`, the app bundle, or the official OpenAI Developer ID signature.
 
 Current patch capabilities:
 
 - `Fast Mode`: enables the local Fast mode UI gate.
 - `Plugins`: enables local plugin and skills entry points, including plugin page, detail, availability, and install-flow gates.
+- `Attach Appshot`: enables the Appshot attach menu on macOS and turns on the managed Computer Use service gate used by capture requests.
 
 Recommended usage flow:
 

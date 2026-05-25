@@ -64,6 +64,20 @@ const targets = [
     search: "let g=m,_=(u?.apps.length??0)>0&&u?.summary.authPolicy===`ON_INSTALL`,v;",
     replacement: "let g=m,_=(u?.apps.length??0)>0&&!1                                  ,v;",
   },
+  {
+    feature: "appshot",
+    label: "Appshot availability",
+    file: "use-is-appshot-available-D0PV8qeY.js",
+    search: "return n===`macOS`&&r",
+    replacement: "return n===`macOS`   ",
+  },
+  {
+    feature: "appshot",
+    label: "Appshot service enablement",
+    file: "app-main-DG-Mf4Wj.js",
+    search: "appshotsEnabled:r,artifactsPane:!0",
+    replacement: "appshotsEnabled:!0,artifactsPane:1",
+  },
 ];
 
 function parseArgs() {
@@ -81,7 +95,7 @@ function parseArgs() {
     }
   }
   if (!result.app || !result.port || result.features.size === 0) {
-    throw new Error("Usage: runtime-launcher.mjs --app <Codex.app> --port <port> --features fast,plugins");
+    throw new Error("Usage: runtime-launcher.mjs --app <Codex.app> --port <port> --features fast,plugins,appshot");
   }
   return result;
 }

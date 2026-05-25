@@ -78,7 +78,7 @@ struct CodexRuntimeLauncher {
             "--port",
             String(port),
             "--features",
-            featureArgument(options)
+            Self.featureArgument(options)
         ]
 
         let logURL = FileManager.default.temporaryDirectory
@@ -101,10 +101,11 @@ struct CodexRuntimeLauncher {
         return CodexRuntimeLaunchResult(port: port, processIdentifier: process.processIdentifier)
     }
 
-    private func featureArgument(_ options: CodexDesktopPatchOptions) -> String {
+    static func featureArgument(_ options: CodexDesktopPatchOptions) -> String {
         var features: [String] = []
         if options.contains(.fastMode) { features.append("fast") }
         if options.contains(.plugins) { features.append("plugins") }
+        if options.contains(.appshot) { features.append("appshot") }
         return features.joined(separator: ",")
     }
 

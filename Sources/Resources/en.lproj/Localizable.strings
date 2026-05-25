@@ -13,6 +13,8 @@
 "ui.settings.source_repository" = "Source repository";
 "ui.app.updates" = "Updates";
 "ui.app.check_for_updates" = "Check for Updates...";
+"ui.app.show_main_window" = "Show Main Window";
+"ui.app.quit" = "Quit";
 
 /* Common actions */
 "ui.action.add_configuration" = "Add Configuration";
@@ -122,15 +124,21 @@
 "ui.codex_desktop_patch.fast_mode_detail" = "Removes the local ChatGPT sign-in gate for Fast mode UI. Service availability still depends on your Codex account.";
 "ui.codex_desktop_patch.plugins" = "Plugins";
 "ui.codex_desktop_patch.plugins_detail" = "Enables local plugin and skills entry points. It does not bypass account, workspace, or admin requirements.";
+"ui.codex_desktop_patch.appshot" = "Attach Appshot";
+"ui.codex_desktop_patch.appshot_detail" = "Enables the Appshot attach menu on macOS by removing the local feature-flag gate.";
 "ui.codex_desktop_patch.actions" = "Patch Controls";
 "ui.codex_desktop_patch.actions_detail" = "Enables the selected features through runtime interception without modifying app.asar or re-signing Codex, preserving the official signature and history access.";
 "ui.codex_desktop_patch.runtime_launch" = "Runtime Launch";
 "ui.codex_desktop_patch.runtime_launch_help" = "Recommended. Temporarily enables the selected features through runtime interception without modifying app.asar or re-signing Codex.";
 "ui.codex_desktop_patch.state_unpatched" = "Ready";
 "ui.codex_desktop_patch.state_patched" = "Patched";
-"ui.codex_desktop_patch.state_patched_all" = "Fast + Plugins";
+"ui.codex_desktop_patch.state_patched_all" = "Fast + Plugins + Appshot";
 "ui.codex_desktop_patch.state_patched_fast" = "Fast";
 "ui.codex_desktop_patch.state_patched_plugins" = "Plugins";
+"ui.codex_desktop_patch.state_patched_appshot" = "Appshot";
+"ui.codex_desktop_patch.state_patched_fast_plugins" = "Fast + Plugins";
+"ui.codex_desktop_patch.state_patched_fast_appshot" = "Fast + Appshot";
+"ui.codex_desktop_patch.state_patched_plugins_appshot" = "Plugins + Appshot";
 "ui.codex_desktop_patch.state_damaged" = "Needs restore";
 "ui.codex_desktop_patch.state_unsupported" = "Unsupported";
 "ui.profile.configuration_files" = "Configuration Files";

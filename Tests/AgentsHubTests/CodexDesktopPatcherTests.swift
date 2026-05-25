@@ -37,7 +37,9 @@ struct CodexDesktopPatcherTests {
             shortVersion: "26.519.41501",
             files: [
                 "webview/assets/use-is-fast-mode-enabled-CwUgvZ2O.js": "d?.authMethod!==`chatgpt`||g",
-                "webview/assets/skills-page-C8PW4EqX.js": "s&&!m)"
+                "webview/assets/skills-page-C8PW4EqX.js": "s&&!m)",
+                "webview/assets/use-is-appshot-available-D0PV8qeY.js": "return n===`macOS`&&r",
+                "webview/assets/app-main-DG-Mf4Wj.js": "appshotsEnabled:r,artifactsPane:!0"
             ]
         )
         let patcher = CodexDesktopPatcher(
@@ -51,6 +53,7 @@ struct CodexDesktopPatcherTests {
         #expect(status.installation?.asarSHA256 == sha256Hex(Data(contentsOf: fixture.asarURL)))
         #expect(status.availableCapabilities.contains(.fastMode))
         #expect(status.availableCapabilities.contains(.plugins))
+        #expect(status.availableCapabilities.contains(.appshot))
         #expect(status.patchState == .unpatched)
     }
 
@@ -71,6 +74,51 @@ struct CodexDesktopPatcherTests {
         )
 
         #expect(try patcher.status().patchState == .patched(.plugins))
+    }
+
+    @Test("Patcher detects already patched Appshot marker")
+    func detectsAlreadyPatchedAppshotMarker() throws {
+        let fixture = try CodexDesktopFixture(
+            shortVersion: "26.519.41501",
+            files: [
+                "webview/assets/use-is-appshot-available-D0PV8qeY.js":
+                    CodexDesktopPatcher.appshotAvailabilityReplacement.replacement,
+                "webview/assets/app-main-DG-Mf4Wj.js":
+                    CodexDesktopPatcher.appshotServiceEnablementReplacement.replacement
+            ]
+        )
+        let patcher = CodexDesktopPatcher(
+            appSearchURLs: [fixture.appURL]
+        )
+
+        #expect(try patcher.status().patchState == .patched(.appshot))
+    }
+
+    @Test("Appshot patch updates menu and service enablement gates")
+    func appshotPatchUpdatesMenuAndServiceEnablementGates() throws {
+        let fixture = try CodexDesktopFixture(
+            shortVersion: "26.519.41501",
+            files: [
+                "webview/assets/use-is-appshot-available-D0PV8qeY.js":
+                    CodexDesktopPatcher.appshotAvailabilityReplacement.search,
+                "webview/assets/app-main-DG-Mf4Wj.js":
+                    CodexDesktopPatcher.appshotServiceEnablementReplacement.search
+            ]
+        )
+        let archive = ElectronAsarArchive(url: fixture.asarURL)
+
+        try archive.apply(
+            CodexDesktopPatcher.builtInManifests[0].replacements(for: .appshot)
+        )
+
+        #expect(
+            try archive.string(at: CodexDesktopPatcher.appshotAvailabilityReplacement.path)
+                .contains(CodexDesktopPatcher.appshotAvailabilityReplacement.replacement)
+        )
+        #expect(
+            try archive.string(at: CodexDesktopPatcher.appshotServiceEnablementReplacement.path)
+                .contains(CodexDesktopPatcher.appshotServiceEnablementReplacement.replacement)
+        )
     }
 }
 

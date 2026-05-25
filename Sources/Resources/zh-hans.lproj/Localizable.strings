@@ -13,6 +13,8 @@
 "ui.settings.source_repository" = "源码仓库";
 "ui.app.updates" = "更新";
 "ui.app.check_for_updates" = "检查更新...";
+"ui.app.show_main_window" = "显示主窗口";
+"ui.app.quit" = "退出";
 
 /* Common actions */
 "ui.action.add_configuration" = "添加配置";
@@ -122,15 +124,21 @@
 "ui.codex_desktop_patch.fast_mode_detail" = "移除 Fast 模式 UI 的本地 ChatGPT 登录门槛；服务是否可用仍取决于你的 Codex 账号。";
 "ui.codex_desktop_patch.plugins" = "插件功能";
 "ui.codex_desktop_patch.plugins_detail" = "启用本地插件与技能入口；不会绕过账号、工作区或管理员权限要求。";
+"ui.codex_desktop_patch.appshot" = "Attach Appshot";
+"ui.codex_desktop_patch.appshot_detail" = "在 macOS 上启用 Appshot 附加菜单，移除本地 feature flag 门槛。";
 "ui.codex_desktop_patch.actions" = "补丁控制";
 "ui.codex_desktop_patch.actions_detail" = "通过运行时拦截启用所选功能，不修改 app.asar、不重签名，可保留官方签名和原有历史访问能力。";
 "ui.codex_desktop_patch.runtime_launch" = "运行时启动";
 "ui.codex_desktop_patch.runtime_launch_help" = "推荐方式。通过运行时拦截临时启用已选功能，不修改 Codex app.asar，也不会重签名应用。";
 "ui.codex_desktop_patch.state_unpatched" = "可应用";
 "ui.codex_desktop_patch.state_patched" = "已补丁";
-"ui.codex_desktop_patch.state_patched_all" = "Fast + 插件";
+"ui.codex_desktop_patch.state_patched_all" = "Fast + 插件 + Appshot";
 "ui.codex_desktop_patch.state_patched_fast" = "Fast";
 "ui.codex_desktop_patch.state_patched_plugins" = "插件";
+"ui.codex_desktop_patch.state_patched_appshot" = "Appshot";
+"ui.codex_desktop_patch.state_patched_fast_plugins" = "Fast + 插件";
+"ui.codex_desktop_patch.state_patched_fast_appshot" = "Fast + Appshot";
+"ui.codex_desktop_patch.state_patched_plugins_appshot" = "插件 + Appshot";
 "ui.codex_desktop_patch.state_damaged" = "需恢复";
 "ui.codex_desktop_patch.state_unsupported" = "不支持";
 "ui.profile.configuration_files" = "配置文件";

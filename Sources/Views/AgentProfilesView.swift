@@ -147,6 +147,12 @@ struct AgentProfilesView: View {
                 option: .plugins
             )
             SettingsDivider()
+            codexDesktopPatchOptionRow(
+                title: L.string("ui.codex_desktop_patch.appshot", using: lm),
+                detail: L.string("ui.codex_desktop_patch.appshot_detail", using: lm),
+                option: .appshot
+            )
+            SettingsDivider()
             SettingsRow {
                 FieldLabel(
                     L.string("ui.codex_desktop_patch.actions", using: lm),
@@ -400,14 +406,26 @@ struct AgentProfilesView: View {
         case .unpatched:
             return L.string("ui.codex_desktop_patch.state_unpatched", using: lm)
         case let .patched(options):
-            if options.contains([.fastMode, .plugins]) {
+            if options.contains([.fastMode, .plugins, .appshot]) {
                 return L.string("ui.codex_desktop_patch.state_patched_all", using: lm)
+            }
+            if options.contains([.fastMode, .plugins]) {
+                return L.string("ui.codex_desktop_patch.state_patched_fast_plugins", using: lm)
+            }
+            if options.contains([.fastMode, .appshot]) {
+                return L.string("ui.codex_desktop_patch.state_patched_fast_appshot", using: lm)
+            }
+            if options.contains([.plugins, .appshot]) {
+                return L.string("ui.codex_desktop_patch.state_patched_plugins_appshot", using: lm)
             }
             if options.contains(.fastMode) {
                 return L.string("ui.codex_desktop_patch.state_patched_fast", using: lm)
             }
             if options.contains(.plugins) {
                 return L.string("ui.codex_desktop_patch.state_patched_plugins", using: lm)
+            }
+            if options.contains(.appshot) {
+                return L.string("ui.codex_desktop_patch.state_patched_appshot", using: lm)
             }
             return L.string("ui.codex_desktop_patch.state_patched", using: lm)
         case .damaged:

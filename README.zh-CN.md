@@ -97,13 +97,14 @@ Codex 页面可以检测安装在 `/Applications/Codex.app` 或 `~/Applications/
 
 - 使用本机 Chrome DevTools Protocol endpoint 启动官方 Codex 可执行文件。
 - 仅在本次启动会话中拦截匹配的 `app://` JavaScript 资源。
-- 在内存中应用选中的 Fast/Plugins 替换。
+- 在内存中应用选中的 Fast/Plugins/Appshot 替换。
 - 不修改 `app.asar`、`Info.plist`、app bundle，也不会替换官方 OpenAI Developer ID 签名。
 
 当前补丁能力：
 
 - `Fast Mode`：启用本地 Fast 模式 UI 门槛。
 - `Plugins`：启用本地插件与技能入口，包括插件页面、详情页、可用性检查和安装流程门槛。
+- `Attach Appshot`：在 macOS 上启用 Appshot 附加菜单，并打开截图请求依赖的 managed Computer Use service 门槛。
 
 推荐使用步骤：
 
