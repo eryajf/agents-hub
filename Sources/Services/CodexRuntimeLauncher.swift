@@ -122,7 +122,7 @@ struct CodexRuntimeLauncher {
     }
 
     private func waitForLauncherReady(process: Process, logURL: URL) throws {
-        let deadline = Date().addingTimeInterval(12)
+        let deadline = Date().addingTimeInterval(45)
         var output = ""
         while Date() < deadline {
             output = (try? String(contentsOf: logURL, encoding: .utf8)) ?? output

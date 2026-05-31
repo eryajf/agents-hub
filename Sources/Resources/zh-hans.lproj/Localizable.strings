@@ -125,11 +125,11 @@
 "ui.codex_desktop_patch.plugins" = "插件功能";
 "ui.codex_desktop_patch.plugins_detail" = "启用本地插件与技能入口；不会绕过账号、工作区或管理员权限要求。";
 "ui.codex_desktop_patch.appshot" = "Attach Appshot";
-"ui.codex_desktop_patch.appshot_detail" = "在 macOS 上启用 Appshot 附加菜单，移除本地 feature flag 门槛。";
+"ui.codex_desktop_patch.appshot_detail" = "在支持的 macOS 版本上启用 Appshot 附加菜单和 capture worker。";
 "ui.codex_desktop_patch.actions" = "补丁控制";
-"ui.codex_desktop_patch.actions_detail" = "通过运行时拦截启用所选功能，不修改 app.asar、不重签名，可保留官方签名和原有历史访问能力。";
+"ui.codex_desktop_patch.actions_detail" = "启动时临时启用所选功能，不修改已安装的 Codex app；Appshot 可能会使用临时签名副本。";
 "ui.codex_desktop_patch.runtime_launch" = "运行时启动";
-"ui.codex_desktop_patch.runtime_launch_help" = "推荐方式。通过运行时拦截临时启用已选功能，不修改 Codex app.asar，也不会重签名应用。";
+"ui.codex_desktop_patch.runtime_launch_help" = "推荐方式。临时启用已选功能，不修改已安装的 Codex app。";
 "ui.codex_desktop_patch.state_unpatched" = "可应用";
 "ui.codex_desktop_patch.state_patched" = "已补丁";
 "ui.codex_desktop_patch.state_patched_all" = "Fast + 插件 + Appshot";

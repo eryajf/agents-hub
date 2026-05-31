@@ -1,6 +1,7 @@
 import CryptoKit
 import Foundation
 import Testing
+
 @testable import AgentsHub
 
 @Suite("Codex Desktop patcher")
@@ -27,7 +28,9 @@ struct CodexDesktopPatcherTests {
         let content = try patched.string(at: "webview/assets/feature.js")
         #expect(content.contains("/* Agents Hub patched */"))
         #expect(!content.contains("authMethod === \"chatgpt\""))
-        #expect(try patched.integrityHash(at: "webview/assets/feature.js") == sha256Hex(Data(content.utf8)))
+        #expect(
+            try patched.integrityHash(at: "webview/assets/feature.js")
+                == sha256Hex(Data(content.utf8)))
         #expect(try patched.headerSHA256Hex() != originalHeaderHash)
     }
 
@@ -36,10 +39,11 @@ struct CodexDesktopPatcherTests {
         let fixture = try CodexDesktopFixture(
             shortVersion: "26.519.41501",
             files: [
-                "webview/assets/use-is-fast-mode-enabled-CwUgvZ2O.js": "d?.authMethod!==`chatgpt`||g",
+                "webview/assets/use-is-fast-mode-enabled-CwUgvZ2O.js":
+                    "d?.authMethod!==`chatgpt`||g",
                 "webview/assets/skills-page-C8PW4EqX.js": "s&&!m)",
                 "webview/assets/use-is-appshot-available-D0PV8qeY.js": "return n===`macOS`&&r",
-                "webview/assets/app-main-DG-Mf4Wj.js": "appshotsEnabled:r,artifactsPane:!0"
+                "webview/assets/app-main-DG-Mf4Wj.js": "appshotsEnabled:r,artifactsPane:!0",
             ]
         )
         let patcher = CodexDesktopPatcher(
@@ -57,16 +61,88 @@ struct CodexDesktopPatcherTests {
         #expect(status.patchState == .unpatched)
     }
 
+    @Test("Patcher detects supported Codex Desktop 26.527 installation")
+    func detectInstallation527() throws {
+        let fixture = try CodexDesktopFixture(
+            shortVersion: "26.527.31326",
+            files: [
+                "webview/assets/use-is-fast-mode-enabled-BCZ3vDoA.js":
+                    CodexDesktopPatcher.fastModeReplacement527.search
+                    + CodexDesktopPatcher.fastModeDetailReplacement527.search
+                    + CodexDesktopPatcher.fastModeModelTiersReplacement527.search,
+                "webview/assets/app-server-manager-signals-Bpaj8VHp.js":
+                    CodexDesktopPatcher.fastModeServiceTiersReplacement527.search,
+                "webview/assets/app-main-BxvNtdQT.js":
+                    CodexDesktopPatcher.pluginsSidebarReplacement527.search
+                    + CodexDesktopPatcher.appshotServiceEnablementReplacement527.search,
+                ".vite/build/main-B260eRdI.js":
+                    CodexDesktopPatcher.appshotCaptureWorkerReplacement527.search,
+                "webview/assets/skills-page-Cqn6vECJ.js":
+                    CodexDesktopPatcher.pluginsPageContentGateReplacement527.search,
+                "webview/assets/plugin-detail-page-CETDWYs4.js":
+                    CodexDesktopPatcher.pluginDetailAccessReplacement527.search
+                    + CodexDesktopPatcher.pluginAuthFlowReplacement527.search,
+                "webview/assets/check-plugin-availability-fTZpqnCL.js":
+                    CodexDesktopPatcher.pluginInstallAvailabilityReplacement527.search,
+                "webview/assets/use-plugin-install-flow-BXFieYft.js":
+                    CodexDesktopPatcher.pluginInstallModalContentReplacement527.search,
+                "webview/assets/use-is-appshot-available-BuzGfUqU.js":
+                    CodexDesktopPatcher.appshotAvailabilityReplacement527.search,
+            ]
+        )
+        let patcher = CodexDesktopPatcher(
+            appSearchURLs: [fixture.appURL]
+        )
+
+        let status = try patcher.status()
+
+        #expect(status.installation?.shortVersion == "26.527.31326")
+        #expect(status.availableCapabilities.contains(.fastMode))
+        #expect(status.availableCapabilities.contains(.plugins))
+        #expect(status.availableCapabilities.contains(.appshot))
+        #expect(status.patchState == .unpatched)
+    }
+
     @Test("Patcher detects already patched plugin markers")
     func detectsAlreadyPatchedPluginMarkers() throws {
         let fixture = try CodexDesktopFixture(
             shortVersion: "26.519.41501",
             files: [
-                "webview/assets/app-main-DG-Mf4Wj.js": CodexDesktopPatcher.pluginsSidebarReplacement.replacement,
-                "webview/assets/skills-page-C8PW4EqX.js": CodexDesktopPatcher.pluginsPageContentGateReplacement.replacement,
-                "webview/assets/plugin-detail-page-jAJa26RM.js": CodexDesktopPatcher.pluginDetailAccessReplacement.replacement,
-                "webview/assets/check-plugin-availability-6p9UsIaB.js": CodexDesktopPatcher.pluginInstallAvailabilityReplacement.replacement,
-                "webview/assets/use-plugin-install-flow-IT_xMrDV.js": CodexDesktopPatcher.pluginInstallModalContentReplacement.replacement
+                "webview/assets/app-main-DG-Mf4Wj.js": CodexDesktopPatcher.pluginsSidebarReplacement
+                    .replacement,
+                "webview/assets/skills-page-C8PW4EqX.js": CodexDesktopPatcher
+                    .pluginsPageContentGateReplacement.replacement,
+                "webview/assets/plugin-detail-page-jAJa26RM.js": CodexDesktopPatcher
+                    .pluginDetailAccessReplacement.replacement,
+                "webview/assets/check-plugin-availability-6p9UsIaB.js": CodexDesktopPatcher
+                    .pluginInstallAvailabilityReplacement.replacement,
+                "webview/assets/use-plugin-install-flow-IT_xMrDV.js": CodexDesktopPatcher
+                    .pluginInstallModalContentReplacement.replacement,
+            ]
+        )
+        let patcher = CodexDesktopPatcher(
+            appSearchURLs: [fixture.appURL]
+        )
+
+        #expect(try patcher.status().patchState == .patched(.plugins))
+    }
+
+    @Test("Patcher detects already patched Codex Desktop 26.527 plugin markers")
+    func detectsAlreadyPatched527PluginMarkers() throws {
+        let fixture = try CodexDesktopFixture(
+            shortVersion: "26.527.31326",
+            files: [
+                "webview/assets/app-main-BxvNtdQT.js":
+                    CodexDesktopPatcher.pluginsSidebarReplacement527.replacement,
+                "webview/assets/skills-page-Cqn6vECJ.js":
+                    CodexDesktopPatcher.pluginsPageContentGateReplacement527.replacement,
+                "webview/assets/plugin-detail-page-CETDWYs4.js":
+                    CodexDesktopPatcher.pluginDetailAccessReplacement527.replacement
+                    + CodexDesktopPatcher.pluginAuthFlowReplacement527.replacement,
+                "webview/assets/check-plugin-availability-fTZpqnCL.js":
+                    CodexDesktopPatcher.pluginInstallAvailabilityReplacement527.replacement,
+                "webview/assets/use-plugin-install-flow-BXFieYft.js":
+                    CodexDesktopPatcher.pluginInstallModalContentReplacement527.replacement,
             ]
         )
         let patcher = CodexDesktopPatcher(
@@ -84,7 +160,9 @@ struct CodexDesktopPatcherTests {
                 "webview/assets/use-is-appshot-available-D0PV8qeY.js":
                     CodexDesktopPatcher.appshotAvailabilityReplacement.replacement,
                 "webview/assets/app-main-DG-Mf4Wj.js":
-                    CodexDesktopPatcher.appshotServiceEnablementReplacement.replacement
+                    CodexDesktopPatcher.appshotServiceEnablementReplacement.replacement,
+                ".vite/build/main-DVEWN1ng.js":
+                    CodexDesktopPatcher.appshotCaptureWorkerReplacement519.replacement,
             ]
         )
         let patcher = CodexDesktopPatcher(
@@ -102,7 +180,9 @@ struct CodexDesktopPatcherTests {
                 "webview/assets/use-is-appshot-available-D0PV8qeY.js":
                     CodexDesktopPatcher.appshotAvailabilityReplacement.search,
                 "webview/assets/app-main-DG-Mf4Wj.js":
-                    CodexDesktopPatcher.appshotServiceEnablementReplacement.search
+                    CodexDesktopPatcher.appshotServiceEnablementReplacement.search,
+                ".vite/build/main-DVEWN1ng.js":
+                    CodexDesktopPatcher.appshotCaptureWorkerReplacement519.search,
             ]
         )
         let archive = ElectronAsarArchive(url: fixture.asarURL)
@@ -119,6 +199,53 @@ struct CodexDesktopPatcherTests {
             try archive.string(at: CodexDesktopPatcher.appshotServiceEnablementReplacement.path)
                 .contains(CodexDesktopPatcher.appshotServiceEnablementReplacement.replacement)
         )
+        #expect(
+            try archive.string(at: CodexDesktopPatcher.appshotCaptureWorkerReplacement519.path)
+                .contains(CodexDesktopPatcher.appshotCaptureWorkerReplacement519.replacement)
+        )
+    }
+
+    @Test("Codex Desktop 26.527 manifest applies selected patches")
+    func applies527ManifestPatches() throws {
+        let fixture = try CodexDesktopFixture(
+            shortVersion: "26.527.31326",
+            files: [
+                "webview/assets/use-is-fast-mode-enabled-BCZ3vDoA.js":
+                    CodexDesktopPatcher.fastModeReplacement527.search
+                    + CodexDesktopPatcher.fastModeDetailReplacement527.search
+                    + CodexDesktopPatcher.fastModeModelTiersReplacement527.search,
+                "webview/assets/app-server-manager-signals-Bpaj8VHp.js":
+                    CodexDesktopPatcher.fastModeServiceTiersReplacement527.search,
+                "webview/assets/app-main-BxvNtdQT.js":
+                    CodexDesktopPatcher.pluginsSidebarReplacement527.search
+                    + CodexDesktopPatcher.appshotServiceEnablementReplacement527.search,
+                ".vite/build/main-B260eRdI.js":
+                    CodexDesktopPatcher.appshotCaptureWorkerReplacement527.search,
+                "webview/assets/skills-page-Cqn6vECJ.js":
+                    CodexDesktopPatcher.pluginsPageContentGateReplacement527.search,
+                "webview/assets/plugin-detail-page-CETDWYs4.js":
+                    CodexDesktopPatcher.pluginDetailAccessReplacement527.search
+                    + CodexDesktopPatcher.pluginAuthFlowReplacement527.search,
+                "webview/assets/check-plugin-availability-fTZpqnCL.js":
+                    CodexDesktopPatcher.pluginInstallAvailabilityReplacement527.search,
+                "webview/assets/use-plugin-install-flow-BXFieYft.js":
+                    CodexDesktopPatcher.pluginInstallModalContentReplacement527.search,
+                "webview/assets/use-is-appshot-available-BuzGfUqU.js":
+                    CodexDesktopPatcher.appshotAvailabilityReplacement527.search,
+            ]
+        )
+        let archive = ElectronAsarArchive(url: fixture.asarURL)
+        let manifest = try #require(
+            CodexDesktopPatcher.builtInManifests.first { $0.shortVersion == "26.527.31326" }
+        )
+
+        try archive.apply(manifest.replacements(for: [.fastMode, .plugins, .appshot]))
+
+        for replacement in manifest.replacements {
+            #expect(
+                try archive.string(at: replacement.path).contains(replacement.replacement)
+            )
+        }
     }
 }
 
@@ -130,7 +257,8 @@ private struct CodexDesktopFixture {
 
     init(shortVersion: String = "26.519.41501", files: [String: String]) throws {
         rootURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent("AgentsHubCodexPatchTests-\(UUID().uuidString)", isDirectory: true)
+            .appendingPathComponent(
+                "AgentsHubCodexPatchTests-\(UUID().uuidString)", isDirectory: true)
         appURL = rootURL.appendingPathComponent("Codex.app", isDirectory: true)
         let contentsURL = appURL.appendingPathComponent("Contents", isDirectory: true)
         let resourcesURL = contentsURL.appendingPathComponent("Resources", isDirectory: true)
@@ -139,7 +267,8 @@ private struct CodexDesktopFixture {
 
         try FileManager.default.createDirectory(at: resourcesURL, withIntermediateDirectories: true)
         try makeAsar(files: files).write(to: asarURL)
-        try writeInfoPlist(shortVersion: shortVersion, asarHash: sha256Hex(Data(contentsOf: asarURL)))
+        try writeInfoPlist(
+            shortVersion: shortVersion, asarHash: sha256Hex(Data(contentsOf: asarURL)))
     }
 
     private func writeInfoPlist(shortVersion: String, asarHash: String) throws {
@@ -150,11 +279,12 @@ private struct CodexDesktopFixture {
             "ElectronAsarIntegrity": [
                 "Resources/app.asar": [
                     "algorithm": "SHA256",
-                    "hash": asarHash
+                    "hash": asarHash,
                 ]
-            ]
+            ],
         ]
-        let data = try PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0)
+        let data = try PropertyListSerialization.data(
+            fromPropertyList: plist, format: .xml, options: 0)
         try data.write(to: infoPlistURL)
     }
 }
@@ -175,8 +305,8 @@ private func makeAsar(files: [String: String]) throws -> Data {
                     "algorithm": "SHA256",
                     "hash": sha256Hex(data),
                     "blockSize": 4_194_304,
-                    "blocks": [sha256Hex(data)]
-                ]
+                    "blocks": [sha256Hex(data)],
+                ],
             ],
             into: &root
         )
@@ -201,7 +331,9 @@ private func makeAsar(files: [String: String]) throws -> Data {
     return result
 }
 
-private func insertAsarEntry(pathComponents: [String], entry: [String: Any], into node: inout [String: Any]) {
+private func insertAsarEntry(
+    pathComponents: [String], entry: [String: Any], into node: inout [String: Any]
+) {
     guard let first = pathComponents.first else { return }
     var files = node["files"] as? [String: Any] ?? [:]
 
@@ -209,7 +341,8 @@ private func insertAsarEntry(pathComponents: [String], entry: [String: Any], int
         files[first] = entry
     } else {
         var child = files[first] as? [String: Any] ?? ["files": [String: Any]()]
-        insertAsarEntry(pathComponents: Array(pathComponents.dropFirst()), entry: entry, into: &child)
+        insertAsarEntry(
+            pathComponents: Array(pathComponents.dropFirst()), entry: entry, into: &child)
         files[first] = child
     }
 
@@ -229,8 +362,8 @@ private func sha256Hex(_ data: Data) -> String {
     SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
 }
 
-private extension Data {
-    mutating func appendUInt32LE(_ value: UInt32) {
+extension Data {
+    fileprivate mutating func appendUInt32LE(_ value: UInt32) {
         append(UInt8(value & 0xff))
         append(UInt8((value >> 8) & 0xff))
         append(UInt8((value >> 16) & 0xff))

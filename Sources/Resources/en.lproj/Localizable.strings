@@ -125,11 +125,11 @@
 "ui.codex_desktop_patch.plugins" = "Plugins";
 "ui.codex_desktop_patch.plugins_detail" = "Enables local plugin and skills entry points. It does not bypass account, workspace, or admin requirements.";
 "ui.codex_desktop_patch.appshot" = "Attach Appshot";
-"ui.codex_desktop_patch.appshot_detail" = "Enables the Appshot attach menu on macOS by removing the local feature-flag gate.";
+"ui.codex_desktop_patch.appshot_detail" = "Enables the Appshot attach menu and capture worker on supported macOS builds.";
 "ui.codex_desktop_patch.actions" = "Patch Controls";
-"ui.codex_desktop_patch.actions_detail" = "Enables the selected features through runtime interception without modifying app.asar or re-signing Codex, preserving the official signature and history access.";
+"ui.codex_desktop_patch.actions_detail" = "Enables selected features at launch. The installed Codex app is left unchanged; Appshot may use a temporary signed copy.";
 "ui.codex_desktop_patch.runtime_launch" = "Runtime Launch";
-"ui.codex_desktop_patch.runtime_launch_help" = "Recommended. Temporarily enables the selected features through runtime interception without modifying app.asar or re-signing Codex.";
+"ui.codex_desktop_patch.runtime_launch_help" = "Recommended. Temporarily enables selected features without modifying the installed Codex app.";
 "ui.codex_desktop_patch.state_unpatched" = "Ready";
 "ui.codex_desktop_patch.state_patched" = "Patched";
 "ui.codex_desktop_patch.state_patched_all" = "Fast + Plugins + Appshot";

@@ -98,13 +98,13 @@ The Codex page can inspect Codex Desktop installations found at `/Applications/C
 - Starts the official Codex executable with a local Chrome DevTools Protocol endpoint.
 - Intercepts matching `app://` JavaScript assets for that launched session only.
 - Applies the selected Fast/Plugins/Appshot replacements in memory.
-- Does not modify `app.asar`, `Info.plist`, the app bundle, or the official OpenAI Developer ID signature.
+- Does not modify the installed Codex app. When Appshot needs an early main-process patch, Agents Hub launches a temporary patched copy and removes it after Codex exits.
 
 Current patch capabilities:
 
 - `Fast Mode`: enables the local Fast mode UI gate.
 - `Plugins`: enables local plugin and skills entry points, including plugin page, detail, availability, and install-flow gates.
-- `Attach Appshot`: enables the Appshot attach menu on macOS and turns on the managed Computer Use service gate used by capture requests.
+- `Attach Appshot`: enables the Appshot attach menu on macOS, turns on the managed Computer Use service gate used by capture requests, and starts the capture worker in supported public builds.
 
 Recommended usage flow:
 
@@ -112,7 +112,7 @@ Recommended usage flow:
 2. Return to Agents Hub and click `Runtime Launch`.
 3. Keep the launcher process alive while using Codex so lazy-loaded chunks can still be patched.
 
-The current runtime patch flow has been tested and verified OK with Codex Desktop `26.519.41501`. These patches do not bypass Codex account, workspace, admin, or service-tier requirements.
+The current runtime patch flow has been tested and verified OK with Codex Desktop `26.519.41501` and `26.527.31326`. These patches do not bypass Codex account, workspace, admin, or service-tier requirements.
 
 ## Check Local Status
 

@@ -98,13 +98,13 @@ Codex 页面可以检测安装在 `/Applications/Codex.app` 或 `~/Applications/
 - 使用本机 Chrome DevTools Protocol endpoint 启动官方 Codex 可执行文件。
 - 仅在本次启动会话中拦截匹配的 `app://` JavaScript 资源。
 - 在内存中应用选中的 Fast/Plugins/Appshot 替换。
-- 不修改 `app.asar`、`Info.plist`、app bundle，也不会替换官方 OpenAI Developer ID 签名。
+- 不修改已安装的 Codex app。Appshot 需要提前 patch 主进程时，Agents Hub 会启动一个临时补丁副本，并在 Codex 退出后删除。
 
 当前补丁能力：
 
 - `Fast Mode`：启用本地 Fast 模式 UI 门槛。
 - `Plugins`：启用本地插件与技能入口，包括插件页面、详情页、可用性检查和安装流程门槛。
-- `Attach Appshot`：在 macOS 上启用 Appshot 附加菜单，并打开截图请求依赖的 managed Computer Use service 门槛。
+- `Attach Appshot`：在 macOS 上启用 Appshot 附加菜单，打开截图请求依赖的 managed Computer Use service 门槛，并在支持的公开版本中启动 capture worker。
 
 推荐使用步骤：
 
@@ -112,7 +112,7 @@ Codex 页面可以检测安装在 `/Applications/Codex.app` 或 `~/Applications/
 2. 回到 Agents Hub，点击 `运行时启动`。
 3. 使用 Codex 期间保持启动进程运行，以便继续 patch lazy-loaded chunks。
 
-当前已在 Codex Desktop `26.519.41501` 版本中测试验证 OK。这些补丁不会绕过 Codex 账号、工作区、管理员权限或服务 tier 要求。
+当前已在 Codex Desktop `26.519.41501` 与 `26.527.31326` 版本中测试验证 OK。这些补丁不会绕过 Codex 账号、工作区、管理员权限或服务 tier 要求。
 
 ## 检查本地状态
 
