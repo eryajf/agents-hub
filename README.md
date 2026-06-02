@@ -1,4 +1,4 @@
-English | [简体中文](README.zh-CN.md)
+简体中文 | [English](README.en.md)
 
 <div align="center">
 
@@ -15,161 +15,169 @@ English | [简体中文](README.zh-CN.md)
 
 # Agents Hub
 
-A native macOS app for managing reusable API providers and applying Claude Code or Codex profiles to local CLI configuration files.
+一个原生 macOS 应用，用来管理可复用的 API 供应商，并将 Claude Code 或 Codex 配置应用到本地 CLI 配置文件。
 
 </div>
 
 ---
 
-## Requirements
+## 系统要求
 
-- macOS 15 or later
-- Claude Code CLI and/or Codex CLI, if you want Agents Hub to apply profiles to those tools
+- macOS 15 或更高版本
+- 如果需要让 Agents Hub 将配置应用到对应工具，需要安装 Claude Code CLI 和/或 Codex CLI
 
-Agents Hub stores providers and profiles locally, then writes the selected Claude Code or Codex profile into each tool's existing configuration location.
+Agents Hub 会在本地保存供应商和配置，并把选中的 Claude Code 或 Codex 配置写入各工具现有的配置位置。
 
-The app supports automatic updates via Sparkle. You can also check for updates manually from the app menu or `Settings` -> `About`.
+应用支持通过 Sparkle 自动更新。你也可以从应用菜单或 `设置` -> `关于` 手动检查更新。
 
-## Quick Start
+## 快速开始
 
-1. Open Agents Hub.
-2. Open `Providers` and add or edit a provider with its Base URL, provider website, and one or more named API keys.
-3. Select `Claude Code` or `Codex` from the sidebar.
-4. Click `Add Configuration`.
-5. Choose the `API Provider`, select a `Provider Key` when the provider has multiple keys, and set the model fields for that agent.
-6. Click `Set Current` to apply the selected profile.
-7. Open `Overview` and click `Refresh` to check endpoint status and local tool versions.
+1. 打开 Agents Hub。
+2. 打开 `供应商`，添加或编辑供应商的 Base URL、供应商官网，以及一个或多个具名 API Key。
+3. 在侧边栏选择 `Claude Code` 或 `Codex`。
+4. 点击 `添加配置`。
+5. 选择 `API 供应商`；如果该供应商有多个 Key，再选择 `供应商 Key`，然后设置该智能体的模型字段。
+6. 点击 `设为当前` 应用选中的配置。
+7. 打开 `概览`，点击 `刷新` 检查 endpoint 状态和本地工具版本。
 
-## Manage Providers
+## 管理供应商
 
-Providers are shared API connection records that Claude Code and Codex profiles can reuse.
+供应商是 Claude Code 和 Codex 配置都可以复用的 API 连接记录。
 
-- Save a provider name, Base URL, and optional provider website.
-- Add multiple named keys to one provider for different channels or accounts.
-- Duplicate and delete providers from the `Providers` page.
-- Reassign profiles automatically to a fallback provider when a provider or key is removed.
+- 保存供应商名称、Base URL 和可选的供应商官网。
+- 为一个供应商添加多个具名 Key，用于不同渠道或账号。
+- 在 `供应商` 页面复制和删除供应商。
+- 删除供应商或 Key 时，相关配置会自动改用后备供应商。
 
-## Manage API Profiles
+## 管理 API 配置
 
-- Keep separate saved profile lists for Claude Code and Codex.
-- Add, duplicate, delete, and rename agent configurations.
-- Select a shared API provider and provider key for each profile.
-- Store model and provider-specific model options per profile.
-- Mark one profile as current for each agent.
-- Reveal the target configuration files in Finder.
+- 分别为 Claude Code 和 Codex 保存配置列表。
+- 支持新增、复制、删除和重命名智能体配置。
+- 每个配置可选择一个共享的 API 供应商和供应商 Key。
+- 每个配置可保存模型和供应商专属模型选项。
+- 每个智能体可以标记一个当前配置。
+- 可以在 Finder 中显示目标配置文件。
 
-API keys are stored in the local Agents Hub state file through provider keys and are also written to the target CLI configuration files when a profile is applied.
+API Key 会通过供应商 Key 保存在本地 Agents Hub 状态文件中，并在应用配置时写入目标 CLI 配置文件。
 
-## Configure Claude Code
+## 配置 Claude Code
 
-Claude Code profiles are written to `~/.claude/settings.json`.
+Claude Code 配置会写入 `~/.claude/settings.json`。
 
-| Field | Written value |
+| 字段 | 写入内容 |
 | --- | --- |
-| `settings.model` | selected profile model |
-| `env.ANTHROPIC_AUTH_TOKEN` | selected profile API key |
-| `env.ANTHROPIC_BASE_URL` | selected profile base URL |
-| `env.ANTHROPIC_MODEL` | selected profile model |
-| `env.ANTHROPIC_DEFAULT_OPUS_MODEL` | default Opus model |
-| `env.ANTHROPIC_DEFAULT_SONNET_MODEL` | default Sonnet model |
-| `env.ANTHROPIC_DEFAULT_HAIKU_MODEL` | default Haiku model |
+| `settings.model` | 选中配置的模型 |
+| `env.ANTHROPIC_AUTH_TOKEN` | 选中配置的 API Key |
+| `env.ANTHROPIC_BASE_URL` | 选中配置的 Base URL |
+| `env.ANTHROPIC_MODEL` | 选中配置的模型 |
+| `env.ANTHROPIC_DEFAULT_OPUS_MODEL` | 默认 Opus 模型 |
+| `env.ANTHROPIC_DEFAULT_SONNET_MODEL` | 默认 Sonnet 模型 |
+| `env.ANTHROPIC_DEFAULT_HAIKU_MODEL` | 默认 Haiku 模型 |
 
-Agents Hub removes `env.ANTHROPIC_API_KEY` when applying Claude Code profiles, so Claude Code uses `ANTHROPIC_AUTH_TOKEN` from the selected provider key.
+应用 Claude Code 配置时，Agents Hub 会移除 `env.ANTHROPIC_API_KEY`，让 Claude Code 使用所选供应商 Key 对应的 `ANTHROPIC_AUTH_TOKEN`。
 
-Claude Code also has a shared `Skip Claude Onboarding` setting. When enabled, Agents Hub updates `~/.claude.json` and sets `hasCompletedOnboarding` to `true`.
+Claude Code 还有一个共享的 `跳过 Claude 初始引导` 设置。启用后，Agents Hub 会更新 `~/.claude.json`，并将 `hasCompletedOnboarding` 设置为 `true`。
 
-## Configure Codex
+## 配置 Codex
 
-Codex profiles are written to `~/.codex/config.toml` and `~/.codex/auth.json`.
+Codex 配置会写入 `~/.codex/config.toml` 和 `~/.codex/auth.json`。
 
-| File | Written value |
+| 文件 | 写入内容 |
 | --- | --- |
-| `~/.codex/config.toml` | selected model and `model_providers.agents-hub` provider settings |
-| `~/.codex/auth.json` | `OPENAI_API_KEY` from the selected profile |
+| `~/.codex/config.toml` | 选中的模型和 `model_providers.agents-hub` 供应商设置 |
+| `~/.codex/auth.json` | 选中配置的 `OPENAI_API_KEY` |
 
-Agents Hub writes Codex profiles with `wire_api = "responses"` and `requires_openai_auth = true`. The managed Codex provider ID is always `model_providers.agents-hub`; its display name can be either `Agents Hub` or the selected profile name.
+Agents Hub 会以 `wire_api = "responses"` 和 `requires_openai_auth = true` 写入 Codex 配置。受管理的 Codex provider ID 始终写为 `model_providers.agents-hub`；显示名称可以使用 `Agents Hub`，也可以使用选中的配置名称。
 
-Codex also has a shared `Disable Codex Automatic Updates` setting. When enabled, Agents Hub writes Codex Desktop Sparkle defaults and sets `SUEnableAutomaticChecks` and `SUAutomaticallyUpdate` to `false`.
+Codex 还有一个共享的 `禁用 Codex 自动更新` 设置。启用后，Agents Hub 会写入 Codex Desktop 的 Sparkle defaults，并将 `SUEnableAutomaticChecks` 与 `SUAutomaticallyUpdate` 设置为 `false`。
 
-## Codex Desktop Runtime Patches
+## Codex 桌面端运行时补丁
 
-The Codex page can inspect Codex Desktop installations found at `/Applications/Codex.app` or `~/Applications/Codex.app` and enable selected capabilities through `Runtime Launch`:
+Codex 页面可以检测安装在 `/Applications/Codex.app` 或 `~/Applications/Codex.app` 的 Codex Desktop，并通过 `运行时启动` 启用选中的能力：
 
-- Starts the official Codex executable with a local Chrome DevTools Protocol endpoint.
-- Intercepts matching `app://` JavaScript assets for that launched session only.
-- Applies the selected Fast/Plugins/Appshot replacements in memory.
-- Does not modify the installed Codex app. When Appshot needs an early main-process patch, Agents Hub launches a temporary patched copy and removes it after Codex exits.
+- 使用本机 Chrome DevTools Protocol endpoint 启动官方 Codex 可执行文件。
+- 仅在本次启动会话中拦截匹配的 `app://` JavaScript 资源。
+- 在内存中应用选中的 Fast/Plugins/Appshot 替换。
+- 不修改已安装的 Codex app。Appshot 需要提前 patch 主进程时，Agents Hub 会启动一个临时补丁副本，并在 Codex 退出后删除。
 
-Current patch capabilities:
+当前补丁能力：
 
-- `Fast Mode`: enables the local Fast mode UI gate.
-- `Plugins`: enables local plugin and skills entry points, including plugin page, detail, availability, and install-flow gates.
-- `Attach Appshot`: enables the Appshot attach menu on macOS, turns on the managed Computer Use service gate used by capture requests, and starts the capture worker in supported public builds.
+- `Fast Mode`：启用本地 Fast 模式 UI 门槛。
+- `Plugins`：启用本地插件与技能入口，包括插件页面、详情页、可用性检查和安装流程门槛。
+- `Attach Appshot`：在 macOS 上启用 Appshot 附加菜单，打开截图请求依赖的 managed Computer Use service 门槛，并在支持的公开版本中启动 capture worker。
 
-Recommended usage flow:
+已支持的 Codex Desktop 构建：
 
-1. Fully quit Codex Desktop.
-2. Return to Agents Hub and click `Runtime Launch`.
-3. Keep the launcher process alive while using Codex so lazy-loaded chunks can still be patched.
+| Codex Desktop 版本 | Build | 运行时补丁说明 |
+| --- | --- | --- |
+| `26.519.41501` | `3044` | 已按最初支持的 bundle 验证 Fast、Plugins 和 Appshot targets。 |
+| `26.527.31326` | `3390` | 已按更新后的 26.527 bundle 验证 Fast、Plugins 和 Appshot targets。 |
+| `26.527.60818` | `3437` | 已按 2026-06-02 bundle 验证 Fast、Settings Speed、`/fast`、Intelligence Speed、Plugins、插件安装/认证 gates 和 Appshot targets。 |
 
-The current runtime patch flow has been tested and verified OK with Codex Desktop `26.519.41501` and `26.527.31326`. These patches do not bypass Codex account, workspace, admin, or service-tier requirements.
+推荐使用步骤：
 
-## Check Local Status
+1. 先彻底退出 Codex Desktop。
+2. 回到 Agents Hub，点击 `运行时启动`。
+3. 使用 Codex 期间保持启动进程运行，以便继续 patch lazy-loaded chunks。
 
-The `Overview` page shows:
+当前已在 Codex Desktop `26.519.41501`、`26.527.31326` 与 `26.527.60818` 版本中测试验证 OK。这些补丁不会绕过 Codex 账号、工作区、管理员权限或服务 tier 要求。
 
-- endpoint health and latency for the current Claude Code and Codex profiles
-- local `claude` and `codex` CLI versions
-- installed Claude Desktop and Codex Desktop app versions
+## 检查本地状态
 
-Use `Refresh` to re-run API checks and local version detection.
+`概览` 页面会显示：
 
-## Configuration Files
+- 当前 Claude Code 与 Codex 配置的 endpoint 健康状态和延迟
+- 本地 `claude` 与 `codex` CLI 版本
+- 已安装的 Claude Desktop 与 Codex Desktop app 版本
 
-| Path | Purpose |
+点击 `刷新` 可以重新执行 API 检查和本地版本检测。
+
+## 配置文件
+
+| 路径 | 用途 |
 | --- | --- |
-| `~/.config/agents-hub/profiles.json` | Agents Hub provider, key, profile, and shared settings storage |
-| `~/.claude/settings.json` | Claude Code settings written by Claude Code profiles |
-| `~/.claude.json` | Claude Code onboarding state when the shared setting is enabled |
-| `~/.codex/config.toml` | Codex model and provider configuration |
-| `~/.codex/auth.json` | Codex API key auth payload |
+| `~/.config/agents-hub/profiles.json` | Agents Hub 供应商、Key、配置和共享设置存储 |
+| `~/.claude/settings.json` | Claude Code 配置写入的 Claude Code 设置 |
+| `~/.claude.json` | 启用共享设置时写入的 Claude Code onboarding 状态 |
+| `~/.codex/config.toml` | Codex 模型与供应商配置 |
+| `~/.codex/auth.json` | Codex API Key 认证内容 |
 
-## Build Locally
+## 本地构建
 
-Run the app:
+运行应用：
 
 ```sh
 make run
 ```
 
-Build a release binary:
+构建 release 可执行文件：
 
 ```sh
 make build
 ```
 
-Build the app bundle:
+构建 app bundle：
 
 ```sh
 make app
 ```
 
-Build the DMG installer:
+构建 DMG 安装包：
 
 ```sh
 make dmg
 ```
 
-Install the built app into `/Applications`:
+安装到 `/Applications`：
 
 ```sh
 make install
 ```
 
-## Star History
+## Star 历史
 
 [![Star History Chart](https://starchart.cc/QuentinHsu/agents-hub.svg?variant=adaptive)](https://starchart.cc/QuentinHsu/agents-hub)
 
-## License
+## 许可证
 
 [MIT](LICENSE)

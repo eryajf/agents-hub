@@ -28,8 +28,22 @@ const targets = [
   },
   {
     feature: "fast",
+    label: "Fast mode",
+    file: "use-is-fast-mode-enabled-CnM6Q1N9.js",
+    search: "c?.authMethod!==`chatgpt`||u",
+    replacement: "false                    ||u",
+  },
+  {
+    feature: "fast",
     label: "Fast mode detail",
     file: "use-is-fast-mode-enabled-BCZ3vDoA.js",
+    search: "d?.authMethod!==`chatgpt`||g",
+    replacement: "false                    ||g",
+  },
+  {
+    feature: "fast",
+    label: "Fast mode detail",
+    file: "use-is-fast-mode-enabled-CnM6Q1N9.js",
     search: "d?.authMethod!==`chatgpt`||g",
     replacement: "false                    ||g",
   },
@@ -42,12 +56,46 @@ const targets = [
   },
   {
     feature: "fast",
+    label: "Fast mode model tiers",
+    file: "use-is-fast-mode-enabled-CnM6Q1N9.js",
+    search: "v?.models.some(m)??!1",
+    replacement: "true                 ",
+  },
+  {
+    feature: "fast",
     label: "Fast mode service tiers",
     file: "app-server-manager-signals-Bpaj8VHp.js",
     search:
       "function Mp(e){return e?.serviceTiers?.find(e=>Ep(e.id,e.name)===`fast`||e.name.trim().toLowerCase()===`priority`)??null}",
     replacement:
       "function Mp(e){return e?.serviceTiers?.find(e=>Ep(e.id,e.name)===`fast`||e.name===wp)??{id:wp}}                          ",
+  },
+  {
+    feature: "fast",
+    label: "Fast mode settings",
+    file: "general-settings-Bt2lh7rT.js",
+    search:
+      "n=je(),{serviceTierSettings:r,setServiceTier:i}=_e();if(!n||r.availableOptions.length<=1)return null;",
+    replacement:
+      "n=je(),{serviceTierSettings:r,setServiceTier:i}=_e();if(!1||r.availableOptions.length<=1)return null;",
+  },
+  {
+    feature: "fast",
+    label: "Fast slash command",
+    file: "composer-CwxGJF3C.js",
+    search:
+      "id:l,title:u,description:d,requiresEmptyComposer:!1,enabled:n,Icon:c,onSelect:m,dependencies:h}",
+    replacement:
+      "id:l,title:u,description:d,requiresEmptyComposer:!1,enabled:1,Icon:c,onSelect:m,dependencies:h}",
+  },
+  {
+    feature: "fast",
+    label: "Composer Intelligence Speed menu",
+    file: "composer-CwxGJF3C.js",
+    search:
+      "Me=_&&m.availableOptions.length>1?(0,Q.jsx)(Rp,{options:m.availableOptions,selectedServiceTier:I,isLoading:m.isLoading,setServiceTier:h,onSelectComplete:B}):null,",
+    replacement:
+      "Me=1&&m.availableOptions.length>1?(0,Q.jsx)(Rp,{options:m.availableOptions,selectedServiceTier:I,isLoading:m.isLoading,setServiceTier:h,onSelectComplete:B}):null,",
   },
   {
     feature: "plugins",
@@ -64,6 +112,13 @@ const targets = [
     file: "app-main-BxvNtdQT.js",
     search: "u=e&&c&&l,d=mc({hostId:mr}),f=e&&d&&!l,",
     replacement: "u=!1     ,d=mc({hostId:mr}),f=e&&d    ,",
+  },
+  {
+    feature: "plugins",
+    label: "Plugins sidebar",
+    file: "app-main-BwpsB7rB.js",
+    search: "u=e&&c&&l,d=hc({hostId:mr}),f=e&&d&&!l,",
+    replacement: "u=!1     ,d=hc({hostId:mr}),f=e&&d    ,",
   },
   {
     feature: "plugins",
@@ -88,6 +143,13 @@ const targets = [
   },
   {
     feature: "plugins",
+    label: "Plugins page",
+    file: "skills-page-BIZqKbZI.js",
+    search: "s&&!h)",
+    replacement: "s&&!1)",
+  },
+  {
+    feature: "plugins",
     label: "Plugin detail",
     file: "plugin-detail-page-jAJa26RM.js",
     search: "{authMethod:i}=oe();if(Be(i)){",
@@ -98,6 +160,13 @@ const targets = [
     label: "Plugin detail",
     file: "plugin-detail-page-CETDWYs4.js",
     search: "{authMethod:i}=ae();if(Be(i)){",
+    replacement: "{authMethod:i}=ae();if(!1   ){",
+  },
+  {
+    feature: "plugins",
+    label: "Plugin detail",
+    file: "plugin-detail-page-uf22h4TJ.js",
+    search: "{authMethod:i}=ae();if(De(i)){",
     replacement: "{authMethod:i}=ae();if(!1   ){",
   },
   {
@@ -120,6 +189,15 @@ const targets = [
   },
   {
     feature: "plugins",
+    label: "Plugin availability",
+    file: "check-plugin-availability-CDJyCxkN.js",
+    search:
+      "let F=b.length>0&&N===b.length?M?`disabled-by-admin`:`connector-unavailable`:null,I;",
+    replacement:
+      "let F=b.length>0&&N===b.length?M?`disabled-by-admin`:null                   :null,I;",
+  },
+  {
+    feature: "plugins",
     label: "Plugin install flow",
     file: "use-plugin-install-flow-IT_xMrDV.js",
     search: "let g=m,_=(u?.apps.length??0)>0&&u?.summary.authPolicy===`ON_INSTALL`,v;",
@@ -134,8 +212,22 @@ const targets = [
   },
   {
     feature: "plugins",
+    label: "Plugin install flow",
+    file: "use-plugin-install-flow-DpUQcozA.js",
+    search: "let h=m,g=(u?.apps.length??0)>0&&u?.summary.authPolicy===`ON_INSTALL`,_;",
+    replacement: "let h=m,g=(u?.apps.length??0)>0&&!1                                  ,_;",
+  },
+  {
+    feature: "plugins",
     label: "Plugin auth flow",
     file: "plugin-detail-page-CETDWYs4.js",
+    search: "enabled:Y?.summary.installed===!0&&Y.summary.authPolicy===`ON_INSTALL`",
+    replacement: "enabled:!1                                                            ",
+  },
+  {
+    feature: "plugins",
+    label: "Plugin auth flow",
+    file: "plugin-detail-page-uf22h4TJ.js",
     search: "enabled:Y?.summary.installed===!0&&Y.summary.authPolicy===`ON_INSTALL`",
     replacement: "enabled:!1                                                            ",
   },
@@ -155,6 +247,13 @@ const targets = [
   },
   {
     feature: "appshot",
+    label: "Appshot availability",
+    file: "use-is-appshot-available-B6eTO-q8.js",
+    search: "return n===`macOS`&&r",
+    replacement: "return n===`macOS`   ",
+  },
+  {
+    feature: "appshot",
     label: "Appshot service enablement",
     file: "app-main-DG-Mf4Wj.js",
     search: "appshotsEnabled:r,artifactsPane:!0",
@@ -164,6 +263,13 @@ const targets = [
     feature: "appshot",
     label: "Appshot service enablement",
     file: "app-main-BxvNtdQT.js",
+    search: "appshotsEnabled:r,artifactsPane:!0",
+    replacement: "appshotsEnabled:!0,artifactsPane:1",
+  },
+  {
+    feature: "appshot",
+    label: "Appshot service enablement",
+    file: "app-main-BwpsB7rB.js",
     search: "appshotsEnabled:r,artifactsPane:!0",
     replacement: "appshotsEnabled:!0,artifactsPane:1",
   },
@@ -181,6 +287,13 @@ const startupTargets = [
     feature: "appshot",
     label: "Appshot capture worker",
     path: ".vite/build/main-B260eRdI.js",
+    search: "O&&n.j.isInternal(s)&&ae.startComputerUseCaptureWorker()",
+    replacement: "O&&true             &&ae.startComputerUseCaptureWorker()",
+  },
+  {
+    feature: "appshot",
+    label: "Appshot capture worker",
+    path: ".vite/build/main-DowL6vN4.js",
     search: "O&&n.j.isInternal(s)&&ae.startComputerUseCaptureWorker()",
     replacement: "O&&true             &&ae.startComputerUseCaptureWorker()",
   },
