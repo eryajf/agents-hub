@@ -194,8 +194,8 @@ struct CodexDesktopPatcher {
             if pluginMarkers.isEmpty {
                 false
             } else {
-                try pluginMarkers.allSatisfy { marker in
-                    try archive.string(at: marker.path).contains(marker.marker)
+                pluginMarkers.allSatisfy { marker in
+                    (try? archive.string(at: marker.path).contains(marker.marker)) == true
                 }
             }
         let hasLegacyBrokenPatch =
@@ -323,6 +323,22 @@ struct CodexDesktopPatcher {
         replacement: fastModeModelTiersReplacement527.replacement
     )
 
+    static let fastModeServiceTiersReplacement601 = CodexDesktopPatchReplacement(
+        option: .fastMode,
+        path: "webview/assets/app-server-manager-signals-BOGyjFm3.js",
+        search:
+            "function uA(e){return e?.serviceTiers?.find(e=>rA(e.id,e.name)===`fast`||e.name.trim().toLowerCase()===`priority`)??null}",
+        replacement:
+            "function uA(e){return e?.serviceTiers?.find(e=>rA(e.id,e.name)===`fast`||e.name===tA.fastLabel)??{id:tA.fastLabel}}      "
+    )
+
+    static let fastModeComposerMenuReplacement601 = CodexDesktopPatchReplacement(
+        option: .fastMode,
+        path: "webview/assets/composer-CUO1FiyC.js",
+        search: "ae=_&&m.availableOptions.length>1",
+        replacement: "ae=1&&m.availableOptions.length>1"
+    )
+
     static let pluginsSidebarReplacement519 = CodexDesktopPatchReplacement(
         option: .plugins,
         path: "webview/assets/app-main-DG-Mf4Wj.js",
@@ -346,6 +362,15 @@ struct CodexDesktopPatcher {
         replacement: "u=!1     ,d=hc({hostId:mr}),f=e&&d    ,"
     )
 
+    static let pluginsSidebarReplacement601 = CodexDesktopPatchReplacement(
+        option: .plugins,
+        path: "webview/assets/app-main-C3VNTc8v.js",
+        search:
+            "h=e&&n&&m&&r&&!c&&l!=null&&s!=null&&o&&!tl(s)&&!u,t[3]=s,t[4]=e,t[5]=m,t[6]=u,t[7]=n,t[8]=c,t[9]=r,t[10]=o,t[11]=l,t[12]=h",
+        replacement:
+            "h=e&&n&&m&&r&&!c&&l!=null&&s!=null&&o        &&!u,t[3]=s,t[4]=e,t[5]=m,t[6]=u,t[7]=n,t[8]=c,t[9]=r,t[10]=o,t[11]=l,t[12]=h"
+    )
+
     static let pluginsPageContentGateReplacement519 = CodexDesktopPatchReplacement(
         option: .plugins,
         path: "webview/assets/skills-page-C8PW4EqX.js",
@@ -365,6 +390,13 @@ struct CodexDesktopPatcher {
         path: "webview/assets/skills-page-BIZqKbZI.js",
         search: "s&&!h)",
         replacement: "s&&!1)"
+    )
+
+    static let pluginsEnabledReplacement601 = CodexDesktopPatchReplacement(
+        option: .plugins,
+        path: "webview/assets/use-is-plugins-enabled-DudZfU21.js",
+        search: "c?.enabled??!0",
+        replacement: "true          "
     )
 
     static let pluginsPageContentLegacyRepairReplacement519 = CodexDesktopPatchReplacement(
@@ -420,6 +452,15 @@ struct CodexDesktopPatcher {
         replacement: pluginInstallAvailabilityReplacement527.replacement
     )
 
+    static let pluginInstallAvailabilityReplacement601 = CodexDesktopPatchReplacement(
+        option: .plugins,
+        path: "webview/assets/check-plugin-availability-C1II8bXB.js",
+        search:
+            "let F=b.length>0&&N===b.length?M?`disabled-by-admin`:`connector-unavailable`:null,I;",
+        replacement:
+            "let F=b.length>0&&N===b.length?M?`disabled-by-admin`:null                   :null,I;"
+    )
+
     static let pluginInstallModalContentReplacement519 = CodexDesktopPatchReplacement(
         option: .plugins,
         path: "webview/assets/use-plugin-install-flow-IT_xMrDV.js",
@@ -441,6 +482,13 @@ struct CodexDesktopPatcher {
         replacement: "let h=m,g=(u?.apps.length??0)>0&&!1                                  ,_;"
     )
 
+    static let pluginInstallModalContentReplacement601 = CodexDesktopPatchReplacement(
+        option: .plugins,
+        path: "webview/assets/use-plugin-install-flow-C0YRtVkW.js",
+        search: "U=d.kind===`details`&&d.plugin.plugin.authPolicy===`ON_INSTALL`,",
+        replacement: "U=!1,                                                           "
+    )
+
     static let pluginAuthFlowReplacement527 = CodexDesktopPatchReplacement(
         option: .plugins,
         path: "webview/assets/plugin-detail-page-CETDWYs4.js",
@@ -453,6 +501,13 @@ struct CodexDesktopPatcher {
         path: pluginDetailAccessReplacement52760818.path,
         search: pluginAuthFlowReplacement527.search,
         replacement: pluginAuthFlowReplacement527.replacement
+    )
+
+    static let pluginAuthFlowReplacement601 = CodexDesktopPatchReplacement(
+        option: .plugins,
+        path: "webview/assets/plugin-detail-page-BS2Xbdl4.js",
+        search: "enabled:J?.summary.installed===!0&&J.summary.authPolicy===`ON_INSTALL`",
+        replacement: "enabled:!1                                                            "
     )
 
     static let appshotAvailabilityReplacement519 = CodexDesktopPatchReplacement(
@@ -476,6 +531,13 @@ struct CodexDesktopPatcher {
         replacement: appshotAvailabilityReplacement527.replacement
     )
 
+    static let appshotAvailabilityReplacement601 = CodexDesktopPatchReplacement(
+        option: .appshot,
+        path: "webview/assets/appshot-availability-CHEIX-Tb.js",
+        search: "if(t(o)!==`macOS`||!t(i,`1304276663`))return!1;",
+        replacement: "if(t(o)!==`macOS`                    )return!1;"
+    )
+
     static let appshotServiceEnablementReplacement519 = CodexDesktopPatchReplacement(
         option: .appshot,
         path: "webview/assets/app-main-DG-Mf4Wj.js",
@@ -497,6 +559,13 @@ struct CodexDesktopPatcher {
         replacement: appshotServiceEnablementReplacement527.replacement
     )
 
+    static let appshotServiceEnablementReplacement601 = CodexDesktopPatchReplacement(
+        option: .appshot,
+        path: pluginsSidebarReplacement601.path,
+        search: "appshotsEnabled:r,codexChronicleConfig:s",
+        replacement: "appshotsEnabled:1,codexChronicleConfig:s"
+    )
+
     static let appshotCaptureWorkerReplacement519 = CodexDesktopPatchReplacement(
         option: .appshot,
         path: ".vite/build/main-DVEWN1ng.js",
@@ -516,6 +585,13 @@ struct CodexDesktopPatcher {
         path: ".vite/build/main-DowL6vN4.js",
         search: appshotCaptureWorkerReplacement527.search,
         replacement: appshotCaptureWorkerReplacement527.replacement
+    )
+
+    static let appshotCaptureWorkerReplacement601 = CodexDesktopPatchReplacement(
+        option: .appshot,
+        path: ".vite/build/main-BJ6Uf5yA.js",
+        search: "E&&r.M.isInternal(o)&&ie.startComputerUseCaptureWorker()",
+        replacement: "E&&true             &&ie.startComputerUseCaptureWorker()"
     )
 
     static let pluginsPageContentLegacyBrokenPatch = CodexDesktopPatchMarker(
@@ -577,7 +653,20 @@ struct CodexDesktopPatcher {
         appshotCaptureWorkerReplacement52760818,
     ]
 
-    static let allKnownReplacements = replacements519 + replacements527 + replacements52760818
+    static let replacements601 = [
+        fastModeServiceTiersReplacement601,
+        fastModeComposerMenuReplacement601,
+        pluginsSidebarReplacement601,
+        pluginsEnabledReplacement601,
+        pluginInstallAvailabilityReplacement601,
+        pluginInstallModalContentReplacement601,
+        pluginAuthFlowReplacement601,
+        appshotAvailabilityReplacement601,
+        appshotServiceEnablementReplacement601,
+        appshotCaptureWorkerReplacement601,
+    ]
+
+    static let allKnownReplacements = replacements519 + replacements527 + replacements52760818 + replacements601
 
     static let builtInManifests: [CodexDesktopPatchManifest] = [
         CodexDesktopPatchManifest(
@@ -594,6 +683,11 @@ struct CodexDesktopPatcher {
             shortVersion: "26.527.60818",
             originalAsarSHA256: "63aa85903e8cd29e881fc2d098bc169fd9e7dce32532dee952b45e776338c0dc",
             replacements: replacements52760818
+        ),
+        CodexDesktopPatchManifest(
+            shortVersion: "26.601.21317",
+            originalAsarSHA256: "effccc2a802cf9defe9f37d56ddb36fdf1e8ade61bcca7d5505a76bbd275efed",
+            replacements: replacements601
         ),
     ]
 }
