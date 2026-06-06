@@ -339,6 +339,20 @@ struct CodexDesktopPatcher {
         replacement: "ae=1&&m.availableOptions.length>1"
     )
 
+    static let fastModeSettingsReplacement60240724 = CodexDesktopPatchReplacement(
+        option: .fastMode,
+        path: "webview/assets/general-settings-DGJ5NwEx.js",
+        search: "!n||",
+        replacement: "!1||"
+    )
+
+    static let fastModeComposerMenuReplacement60240724 = CodexDesktopPatchReplacement(
+        option: .fastMode,
+        path: "webview/assets/composer-B7sGHJVq.js",
+        search: "_&&",
+        replacement: "1&&"
+    )
+
     static let pluginsSidebarReplacement519 = CodexDesktopPatchReplacement(
         option: .plugins,
         path: "webview/assets/app-main-DG-Mf4Wj.js",
@@ -510,6 +524,13 @@ struct CodexDesktopPatcher {
         replacement: "enabled:!1                                                            "
     )
 
+    static let pluginsCatalogVisibilityReplacement60240724 = CodexDesktopPatchReplacement(
+        option: .plugins,
+        path: "webview/assets/use-plugins-D190QcN7.js",
+        search: "e!==`chatgpt`",
+        replacement: "!1           "
+    )
+
     static let appshotAvailabilityReplacement519 = CodexDesktopPatchReplacement(
         option: .appshot,
         path: "webview/assets/use-is-appshot-available-D0PV8qeY.js",
@@ -536,6 +557,13 @@ struct CodexDesktopPatcher {
         path: "webview/assets/appshot-availability-CHEIX-Tb.js",
         search: "if(t(o)!==`macOS`||!t(i,`1304276663`))return!1;",
         replacement: "if(t(o)!==`macOS`                    )return!1;"
+    )
+
+    static let appshotAvailabilityReplacement60240724 = CodexDesktopPatchReplacement(
+        option: .appshot,
+        path: "webview/assets/appshot-availability-12kfFQVk.js",
+        search: appshotAvailabilityReplacement601.search,
+        replacement: appshotAvailabilityReplacement601.replacement
     )
 
     static let appshotServiceEnablementReplacement519 = CodexDesktopPatchReplacement(
@@ -566,6 +594,13 @@ struct CodexDesktopPatcher {
         replacement: "appshotsEnabled:1,codexChronicleConfig:s"
     )
 
+    static let appshotServiceEnablementReplacement60240724 = CodexDesktopPatchReplacement(
+        option: .appshot,
+        path: "webview/assets/app-main-B9IaMgEw.js",
+        search: appshotServiceEnablementReplacement601.search,
+        replacement: appshotServiceEnablementReplacement601.replacement
+    )
+
     static let appshotCaptureWorkerReplacement519 = CodexDesktopPatchReplacement(
         option: .appshot,
         path: ".vite/build/main-DVEWN1ng.js",
@@ -591,6 +626,13 @@ struct CodexDesktopPatcher {
         option: .appshot,
         path: ".vite/build/main-BJ6Uf5yA.js",
         search: "E&&r.M.isInternal(o)&&ie.startComputerUseCaptureWorker()",
+        replacement: "E&&true             &&ie.startComputerUseCaptureWorker()"
+    )
+
+    static let appshotCaptureWorkerReplacement60240724 = CodexDesktopPatchReplacement(
+        option: .appshot,
+        path: ".vite/build/main-B6dx2gAb.js",
+        search: "E&&r.N.isInternal(o)&&ie.startComputerUseCaptureWorker()",
         replacement: "E&&true             &&ie.startComputerUseCaptureWorker()"
     )
 
@@ -666,7 +708,16 @@ struct CodexDesktopPatcher {
         appshotCaptureWorkerReplacement601,
     ]
 
-    static let allKnownReplacements = replacements519 + replacements527 + replacements52760818 + replacements601
+    static let replacements60240724 = [
+        fastModeSettingsReplacement60240724,
+        fastModeComposerMenuReplacement60240724,
+        pluginsCatalogVisibilityReplacement60240724,
+        appshotAvailabilityReplacement60240724,
+        appshotServiceEnablementReplacement60240724,
+        appshotCaptureWorkerReplacement60240724,
+    ]
+
+    static let allKnownReplacements = replacements519 + replacements527 + replacements52760818 + replacements601 + replacements60240724
 
     static let builtInManifests: [CodexDesktopPatchManifest] = [
         CodexDesktopPatchManifest(
@@ -688,6 +739,11 @@ struct CodexDesktopPatcher {
             shortVersion: "26.601.21317",
             originalAsarSHA256: "effccc2a802cf9defe9f37d56ddb36fdf1e8ade61bcca7d5505a76bbd275efed",
             replacements: replacements601
+        ),
+        CodexDesktopPatchManifest(
+            shortVersion: "26.602.40724",
+            originalAsarSHA256: "bf277fc683463105007108ad64733cc4deb383fead6f81ad562df7cdef480a74",
+            replacements: replacements60240724
         ),
     ]
 }

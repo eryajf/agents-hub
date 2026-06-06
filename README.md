@@ -114,6 +114,7 @@ Codex 页面可以检测安装在 `/Applications/Codex.app` 或 `~/Applications/
 | `26.527.31326` | `3390` | 已按更新后的 26.527 bundle 验证 Fast、Plugins 和 Appshot targets。 |
 | `26.527.60818` | `3437` | 已按 2026-06-02 bundle 验证 Fast、Settings Speed、`/fast`、Intelligence Speed、Plugins、插件安装/认证 gates 和 Appshot targets。 |
 | `26.601.21317` | `3511` | 已按 2026-06-03 bundle 验证新版 hashed assets，修复旧 `app-main-DG-Mf4Wj.js` 路径导致的 `Asar file not found`，并验证 Fast、Plugins 和 Appshot targets。 |
+| `26.602.40724` | `3593` | 已按 2026-06-06 bundle 验证新版 `general-settings`、`composer`、插件安装/连接流程、共享 marketplace prefetch、OpenAI curated catalog 和 Appshot targets。 |
 
 推荐使用步骤：
 
@@ -121,7 +122,7 @@ Codex 页面可以检测安装在 `/Applications/Codex.app` 或 `~/Applications/
 2. 回到 Agents Hub，点击 `运行时启动`。
 3. 使用 Codex 期间保持启动进程运行，以便继续 patch lazy-loaded chunks。
 
-当前已在 Codex Desktop `26.519.41501`、`26.527.31326`、`26.527.60818` 与 `26.601.21317` 版本中测试验证 OK。这些补丁不会绕过 Codex 账号、工作区、管理员权限或服务 tier 要求。
+当前已在 Codex Desktop `26.519.41501`、`26.527.31326`、`26.527.60818`、`26.601.21317` 与 `26.602.40724` 版本中测试验证 OK。这些补丁不会绕过 Codex 账号、工作区、管理员权限或服务 tier 要求。
 
 ## 检查本地状态
 

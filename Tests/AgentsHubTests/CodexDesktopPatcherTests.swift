@@ -93,6 +93,22 @@ struct CodexDesktopPatcherTests {
         #expect(status.patchState == .unpatched)
     }
 
+    @Test("Patcher detects supported Codex Desktop 26.602.40724 installation")
+    func detectInstallation60240724() throws {
+        let fixture = try codexDesktop60240724Fixture()
+        let patcher = CodexDesktopPatcher(
+            appSearchURLs: [fixture.appURL]
+        )
+
+        let status = try patcher.status()
+
+        #expect(status.installation?.shortVersion == "26.602.40724")
+        #expect(status.availableCapabilities.contains(.fastMode))
+        #expect(status.availableCapabilities.contains(.plugins))
+        #expect(status.availableCapabilities.contains(.appshot))
+        #expect(status.patchState == .unpatched)
+    }
+
     @Test("Patcher detects already patched plugin markers")
     func detectsAlreadyPatchedPluginMarkers() throws {
         let fixture = try CodexDesktopFixture(
@@ -228,6 +244,23 @@ struct CodexDesktopPatcherTests {
             )
         }
     }
+
+    @Test("Codex Desktop 26.602.40724 manifest applies selected static patches")
+    func applies60240724ManifestPatches() throws {
+        let fixture = try codexDesktop60240724Fixture()
+        let archive = ElectronAsarArchive(url: fixture.asarURL)
+        let manifest = try #require(
+            CodexDesktopPatcher.builtInManifests.first { $0.shortVersion == "26.602.40724" }
+        )
+
+        try archive.apply(manifest.replacements(for: [.fastMode, .plugins, .appshot]))
+
+        for replacement in manifest.replacements {
+            #expect(
+                try archive.string(at: replacement.path).contains(replacement.replacement)
+            )
+        }
+    }
 }
 
 private func codexDesktop527Fixture() throws -> CodexDesktopFixture {
@@ -286,6 +319,26 @@ private func codexDesktop52760818Fixture() throws -> CodexDesktopFixture {
                 CodexDesktopPatcher.pluginInstallModalContentReplacement52760818.search,
             "webview/assets/use-is-appshot-available-B6eTO-q8.js":
                 CodexDesktopPatcher.appshotAvailabilityReplacement52760818.search,
+        ]
+    )
+}
+
+private func codexDesktop60240724Fixture() throws -> CodexDesktopFixture {
+    try CodexDesktopFixture(
+        shortVersion: "26.602.40724",
+        files: [
+            "webview/assets/general-settings-DGJ5NwEx.js":
+                CodexDesktopPatcher.fastModeSettingsReplacement60240724.search,
+            "webview/assets/composer-B7sGHJVq.js":
+                CodexDesktopPatcher.fastModeComposerMenuReplacement60240724.search,
+            "webview/assets/use-plugins-D190QcN7.js":
+                CodexDesktopPatcher.pluginsCatalogVisibilityReplacement60240724.search,
+            "webview/assets/appshot-availability-12kfFQVk.js":
+                CodexDesktopPatcher.appshotAvailabilityReplacement60240724.search,
+            "webview/assets/app-main-B9IaMgEw.js":
+                CodexDesktopPatcher.appshotServiceEnablementReplacement60240724.search,
+            ".vite/build/main-B6dx2gAb.js":
+                CodexDesktopPatcher.appshotCaptureWorkerReplacement60240724.search,
         ]
     )
 }

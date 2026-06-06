@@ -114,6 +114,32 @@ const targets = [
     replacement: "ae=1&&m.availableOptions.length>1",
   },
   {
+    feature: "fast",
+    label: "Speed setting",
+    file: "general-settings-DGJ5NwEx.js",
+    regex:
+      /(\{isServiceTierAllowed:([A-Za-z_$][\w$]*)\}=[A-Za-z_$][\w$]*\(\),\{serviceTierSettings:([A-Za-z_$][\w$]*),setServiceTier:[^}]+\}=[A-Za-z_$][\w$]*\(\);)if\(!\2\|\|\3\.availableOptions\.length<=1\)return null;/,
+    replacement: "$1if($3.availableOptions.length<=1)return null;",
+    marker: "if(r.availableOptions.length<=1)return null;",
+  },
+  {
+    feature: "fast",
+    label: "Fast slash command",
+    file: "composer-B7sGHJVq.js",
+    regex:
+      /(id:[A-Za-z_$][\w$]*,title:[A-Za-z_$][\w$]*,description:[A-Za-z_$][\w$]*,requiresEmptyComposer:!1,enabled:)([A-Za-z_$][\w$]*)(,Icon:[A-Za-z_$][\w$]*,onSelect:[A-Za-z_$][\w$]*,dependencies:[A-Za-z_$][\w$]*})/,
+    replacement: "$1!0$3",
+    marker: "requiresEmptyComposer:!1,enabled:!0,",
+  },
+  {
+    feature: "fast",
+    label: "Composer Intelligence Speed menu",
+    file: "composer-B7sGHJVq.js",
+    regex: /([,;])([A-Za-z_$][\w$]*)=([A-Za-z_$][\w$]*)&&([A-Za-z_$][\w$]*)\.availableOptions\.length>1,/,
+    replacement: "$1$2=$4.availableOptions.length>1,",
+    marker: "=m.availableOptions.length>1,",
+  },
+  {
     feature: "plugins",
     label: "Plugins sidebar",
     file: "app-main-DG-Mf4Wj.js",
@@ -287,6 +313,105 @@ const targets = [
     replacement: "enabled:!1                                                            ",
   },
   {
+    feature: "plugins",
+    label: "Plugin availability",
+    file: "check-plugin-availability-DzefvT4E.js",
+    regex:
+      /(let )([A-Za-z_$][\w$]*)=([A-Za-z_$][\w$]*)\.length>0&&([A-Za-z_$][\w$]*)===\3\.length\?([A-Za-z_$][\w$]*)\?`disabled-by-admin`:`connector-unavailable`:null,([A-Za-z_$][\w$]*);/,
+    replacement: "$1$2=$3.length>0&&$4===$3.length&&$5?`disabled-by-admin`:null,$6;",
+    marker: "&&M?`disabled-by-admin`:null,",
+  },
+  {
+    feature: "plugins",
+    label: "Plugin detail app connect",
+    file: "check-plugin-availability-DzefvT4E.js",
+    regex:
+      /function ([A-Za-z_$][\w$]*)\(\{directoryApps:([A-Za-z_$][\w$]*),pluginApps:([A-Za-z_$][\w$]*)\}\)\{let ([A-Za-z_$][\w$]*)=new Map\(\2\.map\(([A-Za-z_$][\w$]*)=>\[\5\.id,\5\]\)\);return \3\.map\(([A-Za-z_$][\w$]*)=>\4\.get\(\6\.id\)\)\.filter\(\6=>\6!=null\)\}/,
+    replacement:
+      "function $1({directoryApps:$2,pluginApps:$3}){let $4=new Map($2.map($5=>[$5.id,$5]));return $3.map($6=>$4.get($6.id)??{appMetadata:null,branding:null,description:$6.description??null,distributionChannel:null,id:$6.id,installUrl:$6.installUrl??null,isAccessible:!1,isEnabled:!1,labels:null,logoUrl:$6.logoUrl??null,logoUrlDark:$6.logoUrlDark??null,name:$6.name??$6.displayName??$6.id,pluginDisplayNames:[]}).filter($6=>$6.id!=null)}",
+    marker: "appMetadata:null,branding:null",
+  },
+  {
+    feature: "plugins",
+    label: "Plugin install modal content",
+    file: "use-plugin-install-flow-Dizh5Oce.js",
+    regex:
+      /(disclosureData:([A-Za-z_$][\w$]*)\?[A-Za-z_$][\w$]*:void 0,[^]*?shouldShowInstallDisclosure:)\2(,showLockedComputerUseInstall:)/,
+    replacement: "$1!1$3",
+    marker: "shouldShowInstallDisclosure:!1",
+  },
+  {
+    feature: "plugins",
+    label: "Plugin post-install app connect",
+    file: "use-plugin-install-flow-Dizh5Oce.js",
+    regex:
+      /(let )([A-Za-z_$][\w$]*)=await ([A-Za-z_$][\w$]*)\(\{authPolicy:([A-Za-z_$][\w$]*)\.authPolicy,codexHome:([A-Za-z_$][\w$]*),hostId:([A-Za-z_$][\w$]*),plugin:([A-Za-z_$][\w$]*),queryClient:([A-Za-z_$][\w$]*),windowType:`electron`\}\);if\(/,
+    replacement:
+      "$1$2=await $3({authPolicy:$4.authPolicy,codexHome:$5,hostId:$6,plugin:$7,queryClient:$8,windowType:`electron`}),codexfastAppsNeedingAuth=$4.appsNeedingAuth.length>0?$4.appsNeedingAuth:($7.plugin.apps??[]).map(e=>({appMetadata:null,branding:null,description:e.description??null,distributionChannel:null,id:e.id,installUrl:e.installUrl??null,isAccessible:!1,isEnabled:!1,labels:null,logoUrl:e.logoUrl??null,logoUrlDark:e.logoUrlDark??null,name:e.name??e.displayName??e.id,pluginDisplayNames:[]}));if(",
+    marker: "codexfastAppsNeedingAuth=",
+  },
+  {
+    feature: "plugins",
+    label: "Plugin post-install app connect",
+    file: "use-plugin-install-flow-Dizh5Oce.js",
+    regex:
+      /(if\([A-Za-z_$][\w$]*\([A-Za-z_$][\w$]*\),)([A-Za-z_$][\w$]*)\.authPolicy===`ON_USE`\|\|\2\.appsNeedingAuth\.length===0&&([A-Za-z_$][\w$]*)\.length===0(\)\{)/,
+    replacement: "$1codexfastAppsNeedingAuth.length===0&&$3.length===0$4",
+    marker: "codexfastAppsNeedingAuth.length===0",
+  },
+  {
+    feature: "plugins",
+    label: "Plugin post-install app connect",
+    file: "use-plugin-install-flow-Dizh5Oce.js",
+    regex:
+      /(([A-Za-z_$][\w$]*)\(\{apps:)([A-Za-z_$][\w$]*)\.appsNeedingAuth(,browserExtensions:)/,
+    replacement: "$1codexfastAppsNeedingAuth$4",
+    marker: "{apps:codexfastAppsNeedingAuth",
+  },
+  {
+    feature: "plugins",
+    label: "Plugin post-install app connect",
+    file: "use-plugin-install-flow-Dizh5Oce.js",
+    regex:
+      /(connectingAppId:)([A-Za-z_$][\w$]*)\.authPolicy===`ON_INSTALL`&&\2\.appsNeedingAuth\.length===1&&([A-Za-z_$][\w$]*)\.length===0\?\2\.appsNeedingAuth\[0\]\.id:void 0/,
+    replacement:
+      "$1($2.authPolicy===`ON_INSTALL`||$2.authPolicy===`ON_USE`)&&codexfastAppsNeedingAuth.length===1&&$3.length===0?codexfastAppsNeedingAuth[0].id:void 0",
+    marker: "authPolicy===`ON_USE`)&&codexfastAppsNeedingAuth.length===1",
+  },
+  {
+    feature: "plugins",
+    label: "Composer plugin mentions",
+    file: "composer-B7sGHJVq.js",
+    regex: /(additionalMarketplaceKinds:)\[`shared-with-me`\]/,
+    replacement: "$1[]",
+    marker: "additionalMarketplaceKinds:[]",
+  },
+  {
+    feature: "plugins",
+    label: "Composer plugin mentions",
+    file: "composer-B7sGHJVq.js",
+    regex: /(additionalMarketplaceKinds:)([A-Za-z_$][\w$]*)\?\[`shared-with-me`\]:\[\]/,
+    replacement: "$1$2?[]:[]",
+    marker: "?[]:[]",
+  },
+  {
+    feature: "plugins",
+    label: "Composer plugin mentions",
+    file: "app-prefetch-impl-DnQBF2sE.js",
+    regex:
+      /(\{enabled:)([A-Za-z_$][\w$]*)(,additionalMarketplaceKinds:)\[`shared-with-me`\](\}\),[A-Za-z_$][\w$]*\(\{enabled:)\2(,hostId:[A-Za-z_$][\w$]*,marketplaceKind:`shared-with-me`\}\),)/,
+    replacement: "$1$2$3[]$4!1$5",
+    marker: "additionalMarketplaceKinds:[]",
+  },
+  {
+    feature: "plugins",
+    label: "Plugins catalog visibility",
+    file: "use-plugins-D190QcN7.js",
+    regex: /function ([A-Za-z_$][\w$]*)\(([A-Za-z_$][\w$]*)\)\{return \2!==`chatgpt`\}/,
+    replacement: "function $1($2){return !1}",
+    marker: "){return !1}",
+  },
+  {
     feature: "appshot",
     label: "Appshot availability",
     file: "use-is-appshot-available-D0PV8qeY.js",
@@ -316,6 +441,13 @@ const targets = [
   },
   {
     feature: "appshot",
+    label: "Appshot availability",
+    file: "appshot-availability-12kfFQVk.js",
+    search: "if(t(o)!==`macOS`||!t(i,`1304276663`))return!1;",
+    replacement: "if(t(o)!==`macOS`                    )return!1;",
+  },
+  {
+    feature: "appshot",
     label: "Appshot service enablement",
     file: "app-main-DG-Mf4Wj.js",
     search: "appshotsEnabled:r,artifactsPane:!0",
@@ -339,6 +471,13 @@ const targets = [
     feature: "appshot",
     label: "Appshot service enablement",
     file: "app-main-C3VNTc8v.js",
+    search: "appshotsEnabled:r,codexChronicleConfig:s",
+    replacement: "appshotsEnabled:1,codexChronicleConfig:s",
+  },
+  {
+    feature: "appshot",
+    label: "Appshot service enablement",
+    file: "app-main-B9IaMgEw.js",
     search: "appshotsEnabled:r,codexChronicleConfig:s",
     replacement: "appshotsEnabled:1,codexChronicleConfig:s",
   },
@@ -371,6 +510,13 @@ const startupTargets = [
     label: "Appshot capture worker",
     path: ".vite/build/main-BJ6Uf5yA.js",
     search: "E&&r.M.isInternal(o)&&ie.startComputerUseCaptureWorker()",
+    replacement: "E&&true             &&ie.startComputerUseCaptureWorker()",
+  },
+  {
+    feature: "appshot",
+    label: "Appshot capture worker",
+    path: ".vite/build/main-B6dx2gAb.js",
+    search: "E&&r.N.isInternal(o)&&ie.startComputerUseCaptureWorker()",
     replacement: "E&&true             &&ie.startComputerUseCaptureWorker()",
   },
 ];
@@ -410,11 +556,14 @@ function applyPatches(resourceUrl, body, features) {
     if (!features.has(target.feature) || !targetMatchesURL(target, resourceUrl)) {
       continue;
     }
-    if (content.includes(target.replacement)) {
+    if (content.includes(target.marker ?? target.replacement)) {
       labels.push(target.label);
       continue;
     }
-    if (content.includes(target.search)) {
+    if (target.regex?.test(content)) {
+      content = content.replace(target.regex, target.replacement);
+      labels.push(target.label);
+    } else if (target.search && content.includes(target.search)) {
       content = content.replace(target.search, target.replacement);
       labels.push(target.label);
     }

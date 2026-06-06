@@ -114,6 +114,7 @@ Supported Codex Desktop builds:
 | `26.527.31326` | `3390` | Fast, Plugins, and Appshot targets verified against the updated 26.527 bundle. |
 | `26.527.60818` | `3437` | Fast, Settings Speed, `/fast`, Intelligence Speed, Plugins, plugin install/auth gates, and Appshot targets verified against the June 2, 2026 bundle. |
 | `26.601.21317` | `3511` | Fast, Plugins, and Appshot targets verified against the June 3, 2026 bundle with the new hashed assets; fixes the `Asar file not found` failure from the old `app-main-DG-Mf4Wj.js` path. |
+| `26.602.40724` | `3593` | Fast, the new `general-settings` and `composer` chunks, plugin install/connect flow, shared marketplace prefetch, OpenAI curated catalog visibility, and Appshot targets verified against the June 6, 2026 bundle. |
 
 Recommended usage flow:
 
@@ -121,7 +122,7 @@ Recommended usage flow:
 2. Return to Agents Hub and click `Runtime Launch`.
 3. Keep the launcher process alive while using Codex so lazy-loaded chunks can still be patched.
 
-The current runtime patch flow has been tested and verified OK with Codex Desktop `26.519.41501`, `26.527.31326`, `26.527.60818`, and `26.601.21317`. These patches do not bypass Codex account, workspace, admin, or service-tier requirements.
+The current runtime patch flow has been tested and verified OK with Codex Desktop `26.519.41501`, `26.527.31326`, `26.527.60818`, `26.601.21317`, and `26.602.40724`. These patches do not bypass Codex account, workspace, admin, or service-tier requirements.
 
 ## Check Local Status
 
